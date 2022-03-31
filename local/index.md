@@ -11,9 +11,12 @@ has_children: true
 
 ## Who
 
+- anyone interested in how coding can provoke thinking about language and literature
+
+
 ## What
 
-Summaries of what we'll do in each workshop session:
+Overviews of what we'll do in each workshop session:
 
 - some [basics for humanities research](./session1/)
 - looking at the style of [Lincoln's Gettysburg Address](./session2/)

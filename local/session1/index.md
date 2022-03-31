@@ -9,4 +9,4 @@ nav_order: 3
 
 ## Overview
 
-In our first session, we'll introduce some essential ideas for computational study in the humanities.  Working in the Julia REPL (Julia's ineractive Read-Evaluate-Print Loop), we'll organize different types of information in collections that we can query and transform.
+In our first session, we'll introduce some essential ideas for computational study in the humanities.  Working in the Julia REPL (Julia's interactive Read-Evaluate-Print Loop), we'll organize different types of information in collections that we can query and transform.
