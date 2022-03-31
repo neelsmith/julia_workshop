@@ -16,7 +16,7 @@ There are only two prerequisites for this workshop:
 
 ## Testing your Julia installation
 
-![](./julia-icon.png)) Find an icon that your Julia installation created that looks similar to this, and use it to open an interactive Julia terminal (or REPL).  You should see a prompt:
+![](./julia-icon.png) Find an icon that your Julia installation created that looks similar to this, and use it to open an interactive Julia terminal (or REPL).  If you  see a prompt like this one, you're running Julia!
 
 
 ![REPL](./julia-REPL.png)
