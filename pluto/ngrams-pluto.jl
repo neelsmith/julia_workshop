@@ -48,6 +48,9 @@ These patterns prompt questions like:
 # ╔═╡ bbf1f800-6b5f-457e-b6ff-ba125d09bea7
 md"""## Pluto notebooks
 
+First let's get familiar with our new environment: Pluto notebooks.
+
+
 Every cell in a Pluto notebook is a Julia object!  Recall that this means it has a *value*.  A Pluto notebook server will display the *value* of the cell: you can show or hide the Julia expression defining the cell's value using the 
 
 """

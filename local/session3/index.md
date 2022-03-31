@@ -35,6 +35,8 @@ Pluto.run()
 
 When the server has started up, it will open a web page in your default browser where you can open an existing notebook or start a new one.
 
+**JUST OPEN THIS*** [nb](./session3nb.html)
+
 
 ### Working with Pluto notebooks
 
