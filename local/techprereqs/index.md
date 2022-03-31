@@ -2,7 +2,7 @@
 layout: page
 parent: "Why we code"
 title: "Technical prerequisites"
-nav_order: 1
+nav_order: 0
 ---
 
 # Technical prerequisites
