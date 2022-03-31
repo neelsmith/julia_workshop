@@ -28,6 +28,10 @@ Exit the REPL by typing `exit()` (followed by return).
 
 Open Visual Studio Code.
 
+On the left side of the window, you'll see a strip of icons. Click on the highlighted icon that looks like a block being fit into a grid. This lets you add extensions to VS Code. 
+
+![](vscode-extensions.png)
+
 
 
 If you're on Mac OS, open VS Code, open the Command Palette (`Cmd+Shift+P`) and start typing 'shell command'.  When you see a listing like this !()[https://code.visualstudio.com/assets/docs/setup/mac/shell-command.png], choose `Install 'code' command in PATH`.
