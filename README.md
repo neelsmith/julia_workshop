@@ -1,1 +1,1 @@
-# julia_workshop
+# Why we code
