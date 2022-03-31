@@ -23,11 +23,11 @@ Anyone from student to senior scholar is welcome to join us, especially if any o
 
 - Public talk followed by discussion (Thursday, April 7: poster below)
 
-Overviews of what we'll do in workshop sessions (exact time/place TBA):
+Overviews of workshop sessions (all sessions held in Furman Hall 117):
 
-- some [basics for humanities research](./session1/) (Saturday morning, April 9)
-- looking at the style of [Lincoln's Gettysburg Address](./session2/) (Saturday morning, April 9)
-- comparing [translations of the Bible in multiple languages](./session3/) (Sunday afternoon, April 10)
+- some [basics for humanities research](./session1/) (Saturday, April 9, 9:30-11:30)
+- looking at the style of [Lincoln's Gettysburg Address](./session2/) (Saturday, April 9, 1:30-3:30)
+- comparing [translations of the Bible in multiple languages](./session3/) (Sunday, April 10, 1:30-3:30)
 
 
 ![](./Why_code.png)
