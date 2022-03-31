@@ -1,3 +1,6 @@
 scratch/
 *~
 Manifest.toml
+Gemfile.lock
+_site/
+.jekyll-cache/
