@@ -10,11 +10,26 @@ nav_order: 0
 There are only two prerequisites for this workshop:
 
 1. the [Julia language](https://julialang.org/downloads/).  Download and install the current stable release.
-2. Visual Studio Code with the julia extension installed
-
-> Detailed instructions on downloading, installing and optionally configuring JS Code will be added here.
+2. [Visual Studio Code](https://code.visualstudio.com/download). Download and install the current version for your OS. 
 
 
-## Testing your installation
 
-> Detailed instructions on testing your installation will be added here.
+## Testing your Julia installation
+
+![](./julia-icon.png)) Find an icon that your Julia installation created that looks similar to this, and use it to open an interactive Julia terminal (or REPL).  You should see a prompt:
+
+
+![REPL](./julia-REPL.png)
+
+Exit the REPL by typing `exit()` (followed by return).
+
+
+## Configuring and testing your VS Code installation
+
+Open Visual Studio Code.
+
+
+
+If you're on Mac OS, open VS Code, open the Command Palette (`Cmd+Shift+P`) and start typing 'shell command'.  When you see a listing like this !()[https://code.visualstudio.com/assets/docs/setup/mac/shell-command.png], choose `Install 'code' command in PATH`.
+
+
