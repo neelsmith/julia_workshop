@@ -15,43 +15,22 @@ using Downloads
 
 # ╔═╡ 3c2dbe8c-363c-4ad8-a862-6a74c45808e0
 md"""
-> Workshop **session 1a** of [*Why we code*](https://neelsmith.github.io/why_we_code/)
+> Workshop **session 1b** of [*Why we code*](https://neelsmith.github.io/why_we_code/)
 """
 
 # ╔═╡ 777185cc-b116-11ec-218d-453c13034275
-md"""# Basics for humanities research: the nouns and verbs of the Julia language
+md"""# Basics for humanities research: collections of data
 
 
-In our first session, we'll introduce some essential ideas for computational study in the humanities.  Working in the Julia REPL (Julia's interactive Read-Evaluate-Print Loop), we'll start by getting familiar with the expressing ideas in Julia using the "nouns and verbs" of the Julia language, *objects* and *functions*.
-
-Using the interactive REPL is one of the best ways to get familiar with Julia, and we'll do that in our workshop, but you can use this  Pluto notebook to review, and to experiment with some self-correcting examples.
+We'll continue to work in the Julia REPL throughout the first session of our workshop. Use this  Pluto notebook to review, or to experiment with some self-correcting examples.
 
 !!! note "Summary of content in this notebook"
 
-    1. Objects, values, types, and variables
-    2. Functions for working with objects
+	- 1. Collections of objects
+	- 2. Filtering and mapping collections
 
 
 """
-
-# ╔═╡ 7f8af184-9753-47de-8660-f07990f247d9
-md"""
-## 1. Objects, values, types, and variables
-
-*Objects* are the nouns of the Julia language.  Consider the following cell. Its body contains the characters `"Why code?"`.  This is  a valid *expression* in Julia: it defines a single object. Immediately above the cell body, the Pluto notebook server displays the *value* of that expression.
-"""
-
-
-# ╔═╡ efe0e3ed-0c14-48d3-a0fd-d65dba74ee2f
-"Why code?"
-
-# ╔═╡ 45f22493-7e17-4bab-bd4c-8dca46a15c01
-md"""
-So the expression `"Why code?"` has the value  `"Why code?"`? So what?  Look at the next cell.
-"""
-
-# ╔═╡ 729b6e3a-8305-4de4-bd46-7a7e951eb718
-typeof("Why code?")
 
 # ╔═╡ ca929bdf-dff1-4211-8415-80f69e50b4ef
 md"""
@@ -174,7 +153,7 @@ So does the Odyssey.
 """
 
 # ╔═╡ 509f113b-97f9-4678-a768-42f4a87f0ac6
-md"""## 2. Functions  for working with objects
+md"""## Functions
 
 Functions are the verbs of the Julia language. To use a function, you follow its name with parentheses.
 
@@ -425,6 +404,130 @@ Downloads.download(URL) |> readlines
 
 """
 
+# ╔═╡ f042f25f-fd8f-4911-a466-7fe62fc7b99a
+md""" FUNCTING
+
+#### Collections: Vectors and Matrices
+
+
+split text content of gburg
+
+### More on types and hierarchy
+
+s```
+julia> "Four score" |> split
+2-element Vector{SubString{String}}:
+ "Four"
+ "score"
+
+julia> s1 = "score"
+"score"
+
+julia> s2 = split("four score")[2]
+"score"
+
+julia> s1 == s2
+true
+
+julia> typeof(s1) == typeof(s2)
+false
+```
+
+To see why: functions
+
+
+`split`
+
+
+
+**for** looping
+**conditions**
+
+
+function longest(wordlist)
+    maxlength = 0
+    longestword  = ""
+    for word in wordlist
+        if length(word) > maxlength
+            maxlength = length(word)
+            longestword = word
+        end
+    end
+    longestword
+end
+
+
+(LATER: HOW TO REPLACE CHARACTERS MATCHING REG EXP)
+
+
+LOGIC PROBLEM: what if more than 1 longest word?
+
+"Find words in wordlist longer than length `n`."
+function longerthan(wordlist, n)
+    longwords  = []
+    for word in wordlist
+        if length(word) > n
+            push!(longwords, word)
+        end
+    end
+    longwords
+end
+
+
+
+"Find words in wordlist longer than length `n`."
+function longerthan(wordlist, n)
+    longwords  = []
+    for word in wordlist
+        if length(word) > n
+            push!(longwords, word)
+        end
+    end
+    longwords
+end
+
+
+Now what if we want longest `n` words?
+"""
+
+# ╔═╡ 9e5793e4-d22f-4229-be58-cddf94b57c98
+md"""
+
+
+
+## The two functions that do most of your scholarship
+
+map(w -> length(w), wds) 
+
+Expanded form:
+
+counts = map(wds) do w
+       (w, length(w))
+       end
+
+maximum(counts)       
+using Statistics
+mean(counts)
+
+
+wordcounts = map(wds) do w
+       (w, length(w)))
+end
+
+function longestn(wordlist, n)
+    wordcounts = map(wds) do w
+       (w, length(w))
+    end
+    sorted = sort(wordcounts, by = pair -> pair[2]) |> reverse
+    sorted[1:n]
+end
+
+
+filter(wordcounts) do (w, c)
+    startswith(w, "consecr")
+end
+"""
+
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -658,10 +761,6 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╟─a2cb957f-c8eb-4e0f-a1e5-3e37f2b7bd27
 # ╟─3c2dbe8c-363c-4ad8-a862-6a74c45808e0
 # ╟─777185cc-b116-11ec-218d-453c13034275
-# ╟─7f8af184-9753-47de-8660-f07990f247d9
-# ╠═efe0e3ed-0c14-48d3-a0fd-d65dba74ee2f
-# ╟─45f22493-7e17-4bab-bd4c-8dca46a15c01
-# ╠═729b6e3a-8305-4de4-bd46-7a7e951eb718
 # ╟─ca929bdf-dff1-4211-8415-80f69e50b4ef
 # ╟─04f46f9a-e261-4529-a5a2-91991fdb85d3
 # ╟─45d123c3-d4e1-4559-8d89-9e3eea0b23ef
@@ -700,7 +799,7 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╟─118a9480-f537-4474-b2b2-5d496abe67cc
 # ╠═43e34a4f-9d13-4953-9eca-010ef3ec8815
 # ╠═ccd4fe6a-f3d4-405d-a077-9ad5b96e16ae
-# ╟─30d20326-1008-4885-837c-c335e1e0cd71
+# ╠═30d20326-1008-4885-837c-c335e1e0cd71
 # ╠═215e0ca7-7b87-45b1-a3f9-e1da766a2fe1
 # ╠═a4c323da-b89e-4d9e-8806-872f86697cc3
 # ╟─5d80a880-2a13-45ec-844e-3c2434978ee7
@@ -738,7 +837,9 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╠═7378c4bb-9303-4201-830d-ac3c8a09fb78
 # ╠═335de2a3-730c-48d0-bbaa-87183291680c
 # ╠═e40b98bf-1aa5-402f-8cfd-8b603ed11e48
-# ╠═f3eea46c-75ce-4b43-a183-4a564abf8e77
+# ╟─f3eea46c-75ce-4b43-a183-4a564abf8e77
 # ╠═9224bcb5-a184-4106-8307-78a6c2db9716
+# ╠═f042f25f-fd8f-4911-a466-7fe62fc7b99a
+# ╠═9e5793e4-d22f-4229-be58-cddf94b57c98
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
