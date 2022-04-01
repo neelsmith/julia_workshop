@@ -14,7 +14,7 @@ using PlotlyJS
 
 # ╔═╡ 1cf20b00-f11f-412a-a2cb-5c210c61ad7c
 md"""
-> Workshop session 2 of [*Why we code*](https://neelsmith.github.io/why_we_code/)
+> Workshop **session 2** of [*Why we code*](https://neelsmith.github.io/why_we_code/)
 """
 
 # ╔═╡ 9defd924-b116-11ec-15ab-4d6fd5db5811
@@ -60,6 +60,9 @@ yvalues = map( pair -> pair[2], sorted)
 # ╔═╡ 6e0e01ad-37a3-49fa-9d47-6e1adff184cc
 Plot(bar(x = xlbls, y = yvalues), w = 800, h = 600)
 
+
+
+# ╔═╡ 9cc6e02a-6ac5-497b-ac44-5c1f7176978f
 
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -480,7 +483,7 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 """
 
 # ╔═╡ Cell order:
-# ╠═1cf20b00-f11f-412a-a2cb-5c210c61ad7c
+# ╟─1cf20b00-f11f-412a-a2cb-5c210c61ad7c
 # ╟─9defd924-b116-11ec-15ab-4d6fd5db5811
 # ╟─3b11295a-8a96-4da2-b1d3-5e13fc149077
 # ╠═bfb848da-b77f-44c1-b638-d8da7964c607
@@ -493,5 +496,6 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╠═740f68b2-95d0-4b3e-92fc-4e349ff18b6c
 # ╠═db96f369-5c2e-4157-8907-31a8a9b17d3b
 # ╠═6e0e01ad-37a3-49fa-9d47-6e1adff184cc
+# ╠═9cc6e02a-6ac5-497b-ac44-5c1f7176978f
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
