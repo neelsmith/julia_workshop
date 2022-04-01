@@ -182,7 +182,7 @@ The `for` loop cycles through every item in your collection, and assigns it to t
 
 # ╔═╡ 535de6fb-d0df-4ca9-8565-f149657cf8f1
 md"""
-We'll define a function called `longest` that will look at every item in a list and return the longest term.   
+We'll define a function called `longest` that will look at every item in a list and return the length of longest term in the lexicon.   
 
 We'll start by creating two variables:  `maxlength` records the length of the longest word we have encountered;  to start with, it will be `0`;  `longestseen` is the longest string we have seen so far; to start with, it will be the empty string `""`.  We can then use a `for` loop to consider every word in the list successively.  If it is longer than the longest seen so far, we will assign the word to our `longestseen` variable, record its length in the variable `maxlength`.
 
@@ -190,7 +190,7 @@ Finally, we'll remember to put the answer to our question, "What is the longest 
 """
 
 # ╔═╡ bff18092-41e9-40c9-9e84-6358832677df
-md"""Here's what happens when we try it on the Gettysburg Address: `"battlefield"` is `` characters long."""
+md"""When we try it on the Gettysburg Address, we can see that the longest term is 11 characters long."""
 
 # ╔═╡ 038a02ae-24db-4185-8bca-2e0ebea580a4
 "Find length of longest string in `wordlist`."
@@ -204,91 +204,41 @@ function longest(wordlist)
     longestseen
 end
 
-# ╔═╡ e002f601-ab71-4a11-a505-204d26415094
-md"""
-
-LOGIC PROBLEM: what if more than 1 longest word?
-
-"Find words in wordlist longer than length `n`."
-function longerthan(wordlist, n)
-    longwords  = []
-    for word in wordlist
-        if length(word) > n
-            push!(longwords, word)
-        end
-    end
-    longwords
-end
-
-
-
-"Find words in wordlist longer than length `n`."
-function longerthan(wordlist, n)
-    longwords  = []
-    for word in wordlist
-        if length(word) > n
-            push!(longwords, word)
-        end
-    end
-    longwords
-end
-"""
+# ╔═╡ b8a93192-60a1-4700-989e-bb07be35b66b
+longest(vocablist)
 
 # ╔═╡ 6b15e51d-8f27-4a4f-a179-027ed7aa6821
 md"""## 2. Filtering and mapping collections
 
+
+
 """
 
-# ╔═╡ 6ced3787-4a61-40c6-aee6-be69d0d0b461
-md"""### Exercise
+# ╔═╡ 4002b30b-7b8a-4fc4-b924-820a46238e26
+md"""
+Maybe filter chars!
 
-Let's encapsulate the idea of testing whether 
+Map words to lower case
+
 """
 
-# ╔═╡ 8d7aa0ef-5794-4efe-bf37-fed88ae71949
-"""True if `w` is longer than `cutoff`."""
-function longword(w, cutoff=8)
-	missing
-end
+# ╔═╡ 64769358-4854-4161-b4a0-d17877c91181
+gburg = string_dl(url)
 
-# ╔═╡ f3eea46c-75ce-4b43-a183-4a564abf8e77
-md">Quarry"
+# ╔═╡ 7308ed18-1283-489a-ba9c-b89ff3f3e838
+filter(c -> ! ispunct(c), gburg) |> length
 
-# ╔═╡ f042f25f-fd8f-4911-a466-7fe62fc7b99a
-md""" FUNCTING
+# ╔═╡ 6d462a7d-67fd-40ea-972d-3fc25c5ff1c9
+lowercase(gburg) |> wordlist |> length
 
-(LATER: HOW TO REPLACE CHARACTERS MATCHING REG EXP)
+# ╔═╡ 1f8b636c-3c57-46f8-802a-30de44b7ee37
+lcwords = lowercase(gburg) |> wordlist
 
+# ╔═╡ 3e320b9b-f961-42e6-8380-73ddd544d829
+lenn = map(wd -> length(wd), lcwords) |> maximum
 
-LOGIC PROBLEM: what if more than 1 longest word?
-
-"Find words in wordlist longer than length `n`."
-function longerthan(wordlist, n)
-    longwords  = []
-    for word in wordlist
-        if length(word) > n
-            push!(longwords, word)
-        end
-    end
-    longwords
-end
-
-
-
-"Find words in wordlist longer than length `n`."
-function longerthan(wordlist, n)
-    longwords  = []
-    for word in wordlist
-        if length(word) > n
-            push!(longwords, word)
-        end
-    end
-    longwords
-end
-
-
-Now what if we want longest `n` words?
-"""
+# ╔═╡ eff606c2-3572-48ce-890b-3d37fdb0ae4a
+filter(wd -> length(wd) == 11, vocablist)
 
 # ╔═╡ 9e5793e4-d22f-4229-be58-cddf94b57c98
 md"""
@@ -327,32 +277,6 @@ filter(wordcounts) do (w, c)
     startswith(w, "consecr")
 end
 """
-
-# ╔═╡ 7e959b34-d077-48b8-9d73-11aac0e7e936
-
-"Find words in wordlist longer than length `n`."
-function longerthan(wordlist, n)
-    longwords  = []
-    for word in wordlist
-        if length(word) > n
-            push!(longwords, word)
-        end
-    end
-    longwords
-end
-
-# ╔═╡ 2d73260d-e93d-4798-9b6c-c461e1e72c8d
-
-"Find words in wordlist longer than length `n`."
-function longerthan(wordlist, n)
-    longwords  = []
-    for word in wordlist
-        if length(word) > n
-            push!(longwords, word)
-        end
-    end
-    longwords
-end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -619,16 +543,17 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╟─1e568f29-bf32-4fbb-a143-2505649cf658
 # ╟─44e45c95-2dbb-4086-8326-4df802bf06b3
 # ╟─535de6fb-d0df-4ca9-8565-f149657cf8f1
-# ╟─bff18092-41e9-40c9-9e84-6358832677df
+# ╠═bff18092-41e9-40c9-9e84-6358832677df
 # ╠═038a02ae-24db-4185-8bca-2e0ebea580a4
-# ╠═7e959b34-d077-48b8-9d73-11aac0e7e936
-# ╠═2d73260d-e93d-4798-9b6c-c461e1e72c8d
-# ╠═e002f601-ab71-4a11-a505-204d26415094
+# ╠═b8a93192-60a1-4700-989e-bb07be35b66b
 # ╠═6b15e51d-8f27-4a4f-a179-027ed7aa6821
-# ╠═6ced3787-4a61-40c6-aee6-be69d0d0b461
-# ╠═8d7aa0ef-5794-4efe-bf37-fed88ae71949
-# ╟─f3eea46c-75ce-4b43-a183-4a564abf8e77
-# ╠═f042f25f-fd8f-4911-a466-7fe62fc7b99a
+# ╠═4002b30b-7b8a-4fc4-b924-820a46238e26
+# ╠═64769358-4854-4161-b4a0-d17877c91181
+# ╠═7308ed18-1283-489a-ba9c-b89ff3f3e838
+# ╠═6d462a7d-67fd-40ea-972d-3fc25c5ff1c9
+# ╠═1f8b636c-3c57-46f8-802a-30de44b7ee37
+# ╠═3e320b9b-f961-42e6-8380-73ddd544d829
+# ╠═eff606c2-3572-48ce-890b-3d37fdb0ae4a
 # ╠═9e5793e4-d22f-4229-be58-cddf94b57c98
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
