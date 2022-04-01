@@ -6,4 +6,8 @@ nav_order: 3
 parent: "Pluto notebooks"
 ---
 
-Here it is  [nb](./session3nb.html)
+
+# Session 3: [Comparing translations of the Bible](../../session3/)
+
+
+- Pluto [notebook for session 3](./session3nb.html)

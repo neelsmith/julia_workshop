@@ -6,4 +6,8 @@ nav_order: 2
 parent: "Pluto notebooks"
 ---
 
-Here it is  [nb](./session2nb.html)
+
+# Session 2: [Lincoln's Gettysburg Address](../../session2/)
+
+
+- Pluto [notebook for session 2](./session)

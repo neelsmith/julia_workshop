@@ -5,10 +5,5 @@ nav_order: 2
 has_children: true
 ---
 
-# Workshop sessions as Pluto notebooks
+# Pluto notebooks for each workbook session
 
-
-
-1. nb
-2. nb 
-3. [nb](.session3/session3nb.html)
