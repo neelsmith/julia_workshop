@@ -35,7 +35,7 @@ We'll continue to work in the Julia REPL throughout the first session of our wor
 # ╔═╡ 7f697e14-3ad9-4961-bb73-95944f51a429
 md"""## 1. Collections of data, loops and conditions
 
-Let's review the function we wrote in the notebook for session 1a.
+Let's review the function we wrote in [the notebook for session 1a](https://neelsmith.github.io/why_we_code/notebooks/session1/session1anb.html).
 """
 
 # ╔═╡ 8987603f-7a1f-411d-a1d8-28ab2fe10d23
@@ -88,7 +88,37 @@ md"""Use 'em together!
 """
 
 # ╔═╡ 0f5058fe-ffc3-43c5-a6c0-868ff72ae149
-string_dl(url) |> wordlist
+vocablist = string_dl(url) |> wordlist
+
+# ╔═╡ 255e94bc-4dd5-4168-8296-3c9f9cecdee6
+length(vocablist)
+
+# ╔═╡ 6de55f1a-96dd-49a8-9022-8595d55392a0
+gburgtext = string_dl(url)
+
+# ╔═╡ be12c8b6-5883-42c6-9e79-8f7b234d52cf
+length(gburgtext)
+
+# ╔═╡ cd451847-557b-46fa-98bf-9f26af3e941c
+length(gburgtext) / length(vocablist)
+
+# ╔═╡ 7ea880b7-fdaa-4009-b9d7-704203b1bac3
+vocablist[1]
+
+# ╔═╡ 788a2138-1569-4933-871e-5d68159b8dd5
+vocablist[end]
+
+# ╔═╡ 9072af0c-05fa-47d0-8d96-44e34a95ddf3
+vocablist[1] > 
+
+# ╔═╡ 763c7961-db07-43df-a7fd-907d681d0c56
+gburglines = split(gburgtext, "\n")
+
+# ╔═╡ f25ebe37-4c3e-4f54-8b77-045b01384df3
+typeof(gburglines)
+
+# ╔═╡ 5a7d0145-267f-4f7d-9956-0489be8ce6fd
+
 
 # ╔═╡ 199b9886-524c-4241-8864-5e1474d90fff
 md"""
@@ -466,6 +496,16 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╠═e61b5a71-6a76-4715-bf76-647afecd8c91
 # ╠═059a032b-7452-4f6b-a6c0-cab9ba314042
 # ╠═0f5058fe-ffc3-43c5-a6c0-868ff72ae149
+# ╠═255e94bc-4dd5-4168-8296-3c9f9cecdee6
+# ╟─6de55f1a-96dd-49a8-9022-8595d55392a0
+# ╠═be12c8b6-5883-42c6-9e79-8f7b234d52cf
+# ╠═cd451847-557b-46fa-98bf-9f26af3e941c
+# ╠═7ea880b7-fdaa-4009-b9d7-704203b1bac3
+# ╠═788a2138-1569-4933-871e-5d68159b8dd5
+# ╠═9072af0c-05fa-47d0-8d96-44e34a95ddf3
+# ╠═763c7961-db07-43df-a7fd-907d681d0c56
+# ╠═f25ebe37-4c3e-4f54-8b77-045b01384df3
+# ╠═5a7d0145-267f-4f7d-9956-0489be8ce6fd
 # ╠═199b9886-524c-4241-8864-5e1474d90fff
 # ╟─f3eea46c-75ce-4b43-a183-4a564abf8e77
 # ╠═f042f25f-fd8f-4911-a466-7fe62fc7b99a
