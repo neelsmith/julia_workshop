@@ -83,7 +83,10 @@ md"Selected number to display: $(maxdisplay)"
 md""">Computing ngrams"""
 
 # ╔═╡ a7dfebb7-e9e8-4040-b71f-28bcef6dd22b
+md"""DO A THING RIGHT HERE."""
 
+# ╔═╡ 792abf30-5fb5-4a90-8872-048e16624dd0
+n
 
 # ╔═╡ 08b8c030-0700-46c0-b452-4d47e8bd35e9
 md"""> 
@@ -113,6 +116,12 @@ tidytext = begin
 	alphas = filter(c -> ! ispunct(c), fulltext)
 	map(c -> lowercase(c), alphas)
 end
+
+# ╔═╡ edc8f1d4-dfea-4e32-a2cc-f902816a1a4f
+chunked = slidingwindow(split(tidytext), n = n)
+
+# ╔═╡ 2fb53792-5ba6-40e4-8aaf-6829c04659ea
+group(chunked)
 
 # ╔═╡ db455f9d-83c8-4217-b114-fe950244eeb6
 isnothing(f) ? "Nothing yet." : f
@@ -624,6 +633,9 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╠═fa346c73-60b2-42b4-91c3-40e8b3fa197a
 # ╟─3d1d023e-321c-4d25-9212-3a061d9a4f18
 # ╠═a7dfebb7-e9e8-4040-b71f-28bcef6dd22b
+# ╟─792abf30-5fb5-4a90-8872-048e16624dd0
+# ╠═edc8f1d4-dfea-4e32-a2cc-f902816a1a4f
+# ╠═2fb53792-5ba6-40e4-8aaf-6829c04659ea
 # ╟─ee83b946-8351-4fc0-9d03-058a0769d429
 # ╟─08b8c030-0700-46c0-b452-4d47e8bd35e9
 # ╟─fa5305b8-6573-4319-8aa8-b83bcc3e2d4c
