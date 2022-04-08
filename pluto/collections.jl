@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.18.4
+# v0.17.5
 
 using Markdown
 using InteractiveUtils
@@ -26,16 +26,16 @@ We'll continue to work in the Julia REPL throughout the first session of our wor
 
 !!! note "Summary of content in this notebook"
 
-	1. Collections of data, loops and conditions
+	1. Collections of data, conditions and loops
 	2. Filtering and mapping collections
 
 
 """
 
 # ╔═╡ 7f697e14-3ad9-4961-bb73-95944f51a429
-md"""## 1. Collections of data, loops and conditions
+md"""## 1. Collections of data, conditions and loops
 
-Let's review the function we wrote in the notebook for session 1a.
+Let's review the function we wrote in [the notebook for session 1a](https://neelsmith.github.io/why_we_code/notebooks/session1/session1anb.html).  Recall that we provide one string parameter, and get back an alphabetized list of words.
 """
 
 # ╔═╡ 8987603f-7a1f-411d-a1d8-28ab2fe10d23
@@ -48,34 +48,49 @@ end
 # ╔═╡ c523cfe0-d986-44d6-81d7-5e07dacd5107
 wordlist("I have miles to go before I sleep.")
 
-# ╔═╡ 0ce39bf8-d54b-4c50-ab22-d8cad0aae45e
+# ╔═╡ 506ab751-3df3-4231-8267-8b15af4567a3
 md"""
-This is useful!
+Creating an alphabetized wordlist for a text is a useful scholarly function that is *not* built in to the Julia language.  Even the short example we just wrote should be prompting some questions.  Should we distinguish upper and lower case?  Should we include punctuation characters like the period in `sleep.` in the above example?  We'll consider some of these questions in session 2.  In this notebook, we'll learn more about working with collections of data.
 
-we'll write another shorty
+### Downloading from the internet
 
-"""
-
-# ╔═╡ 64b1e42b-f6c0-43e1-b0f5-a6cb3304ab98
-md"""### Downloading data to work with
-
-Creating an alphabetized wordlist for a text is a useful scholarly function that is *not* built in to the Julia language.  Even the short example we just wrote should be prompting some questions.  Should we distinguish upper and lower case?  Should we include punctuation characters like the period in `sleep.` in the above example?
-
-We'll consider some of these questions in session 2, but before we do, let's learn how to get more data in our hands by downloading content from the internet.  To do that we'll need to use the `Downloads` package that is part of the Julia language but not loaded by default until you include it with the `using` keyword.
-
+Before we do, let's see how to download content from the internet so that we aren't limited to what we can type at the keyboard! We'll use the `Downloads` package that is part of the Julia language but not loaded by default until you include it with the `using` keyword.
 
 """
 
 # ╔═╡ 7378c4bb-9303-4201-830d-ac3c8a09fb78
 md"""
+You can use the function `Downloads.download` with one parameter: a URL to download.
 
+Let's get an early look at the text of the Gettysburg Address that our next session will focus on.
 """
 
 # ╔═╡ 335de2a3-730c-48d0-bbaa-87183291680c
 url = "https://raw.githubusercontent.com/neelsmith/why_we_code/main/data/lincoln/hay.txt"
 
 # ╔═╡ e40b98bf-1aa5-402f-8cfd-8b603ed11e48
-read(Downloads.download(url)) |> String
+Downloads.download(url)
+
+# ╔═╡ 4617a47e-a8d6-4a0f-afa3-99e6a6a64eda
+md"""As you can probably tell, the function has given us the name of the file where it downloaded our content.  We next need to use the `read` function to read the contents of the donwloaded file.
+"""
+
+# ╔═╡ 14c91157-c923-4eb9-8df7-087bab3b4d92
+Downloads.download(url) |> read
+
+# ╔═╡ 895d5f0e-d78b-406f-abc5-50f065e526a5
+md"""Hmmm.  Those results are not quite what we want yet: `read` actually creates a Vector of bytes (which are integer values in Julia), not text.  So one more function: `String` (with a capital S) will convert those bytes for us.
+"""
+
+# ╔═╡ a83976a1-bf57-4350-8138-f46cf34a983f
+Downloads.download(url) |> read |> String
+
+# ╔═╡ e53ee8d2-4e6a-4de7-833d-d8f4710535d2
+md"""That looks more like what we want!
+
+Note that we have easily strung three basic functions together and gone from a URL to a String value with the contents of the remote file.  That's great -- but again, a common enough task for us that we may as well encapsulate the idea of reading String data from a URL in a new function of our own.  The following creates a function named `string_dl` (for "string download").
+
+"""
 
 # ╔═╡ e61b5a71-6a76-4715-bf76-647afecd8c91
 "Download content of `url` and read it into a string value."
@@ -84,142 +99,228 @@ function string_dl(url)
 end
 
 # ╔═╡ 059a032b-7452-4f6b-a6c0-cab9ba314042
-md"""Use 'em together!
+md"""It's natural and easy to use our two functions together.  Conceptually, we want to (1) download the Gettsyburg Address, and (2) create an alphabetized word list from it.  Now we can express that directly in Julia:
 """
 
 # ╔═╡ 0f5058fe-ffc3-43c5-a6c0-868ff72ae149
-string_dl(url) |> wordlist
+vocablist = string_dl(url) |> wordlist
 
-# ╔═╡ 199b9886-524c-4241-8864-5e1474d90fff
-md"""
+# ╔═╡ 6ce0474d-4240-4294-8bc2-50376dfd76d9
+md""" ### Looking at items in a collection
 
-**for** looping
-**conditions**
-
-
-function longest(wordlist)
-    maxlength = 0
-    longestword  = ""
-    for word in wordlist
-        if length(word) > maxlength
-            maxlength = length(word)
-            longestword = word
-        end
-    end
-    longestword
-end
+We might like to know how many any items are in our collection.  The `length` function that you have already encountered works with any kind of list.  (That's actually why it works with strings:  under the hood, a String is just a list of characters!) 
 """
 
-# ╔═╡ f3eea46c-75ce-4b43-a183-4a564abf8e77
-md">Quarry"
+# ╔═╡ 255e94bc-4dd5-4168-8296-3c9f9cecdee6
+length(vocablist)
 
-# ╔═╡ f042f25f-fd8f-4911-a466-7fe62fc7b99a
-md""" FUNCTING
+# ╔═╡ ea830b21-c035-4b4a-92d9-c987c0617697
+md"""We have just answered the question, "How big is the vocabulary of the Gettysburg Address?"  -- a meaningful question for us to think about in our second session.
 
-#### Collections: Vectors and Matrices
 
-\
+You can refer to individual items in a list using a numeric index value between square brackets.  The next cell, for example, first the alphabetically first word in the text:
+"""
 
-### More on types and hierarchy
+# ╔═╡ 7ea880b7-fdaa-4009-b9d7-704203b1bac3
+vocablist[1]
 
-s```
-julia> "Four score" |> split
-2-element Vector{SubString{String}}:
- "Four"
- "score"
+# ╔═╡ 82812e47-8f3b-4f91-a874-dac2154574ed
+md"""The second alphabetized word is just `vocablist[2]`, and so forth.  Julia includes a handy short-hand for referring to the last item in a list.
+"""
 
-julia> s1 = "score"
-"score"
+# ╔═╡ 788a2138-1569-4933-871e-5d68159b8dd5
+vocablist[end]
 
-julia> s2 = split("four score")[2]
-"score"
+# ╔═╡ 5a7d0145-267f-4f7d-9956-0489be8ce6fd
+md"""### Testing conditions
 
-julia> s1 == s2
-true
+One question we'll consider in our next session is whether word length helps us define stylistic habits.  In simplest terms: does an author use big words?
 
-julia> typeof(s1) == typeof(s2)
-false
+We answer that question for a particular word by asking if a word is longer than some threshhold or cutoff point.  In Julia, we can express that with the `>` function.
+
+"""
+
+# ╔═╡ ea8ab664-2fe2-4cdf-a1d9-6d8d77fe7c61
+threshhold = 9
+
+# ╔═╡ 7c8a9cf3-9892-4734-8aae-5e48199fff46
+>(length(vocablist[1]), threshhold)
+
+# ╔═╡ 31943c2b-ae63-4a9c-8387-52a21dba2414
+md"""Recall that `vocablist[1]` is `"But"` -- way shorter than 9 characters!
+
+But again the parentheses may make this function awkward to read.  Let's take advantage of another Julia formatting option:  when a function has *two* parameters, say 'A' and 'B', we can invoke as `A function B`.  This is exactly equivalent to `function(A,B)`, as you can see in the more readable following cell:
+"""
+
+# ╔═╡ 0a53480b-35f7-41f8-9e23-799d623ac474
+length(vocablist[1]) >  threshhold
+
+# ╔═╡ f81bd4bf-4b08-4390-a228-bdc1b81aec22
+md"""And let's note what kind of value the `>` returns."""
+
+# ╔═╡ d58f915a-4ed3-4f5f-8454-931e30c0155c
+typeof(length(vocablist[1]) >  threshhold )
+
+# ╔═╡ 1e568f29-bf32-4fbb-a143-2505649cf658
+md"""`Bool` (short for "Boolean", in honor of the mathematician [George Boole](https://en.wikipedia.org/wiki/George_Boole))) is a type that can only have two possible values:  `true` or `false`.  Note that these are *not* Strings!
+"""
+
+# ╔═╡ 44e45c95-2dbb-4086-8326-4df802bf06b3
+md"""### `for` loops
+
+It's common to process every item in a collection.  In the second half of this notebook, we'll look at two important functions, `filter` and `map`, that work on entire collections, but there are times when you will want to process each item in  a collection.  Julia meets this need with the `for` loop. The general form is
+
+```
+for VARIABLE_NAME in COLLECTION
+	EXPRESSION
+end
 ```
 
-To see why: functions
+The `for` loop cycles through every item in your collection, and assigns it to the variable name you supply.  Let's see how we can use a `for` to find the length of the *longest* word in our vocabulary list from the Gettysburg Address.
 
-
-`split`
-
-
-
-
-
-(LATER: HOW TO REPLACE CHARACTERS MATCHING REG EXP)
-
-
-LOGIC PROBLEM: what if more than 1 longest word?
-
-"Find words in wordlist longer than length `n`."
-function longerthan(wordlist, n)
-    longwords  = []
-    for word in wordlist
-        if length(word) > n
-            push!(longwords, word)
-        end
-    end
-    longwords
-end
-
-
-
-"Find words in wordlist longer than length `n`."
-function longerthan(wordlist, n)
-    longwords  = []
-    for word in wordlist
-        if length(word) > n
-            push!(longwords, word)
-        end
-    end
-    longwords
-end
-
-
-Now what if we want longest `n` words?
 """
 
-# ╔═╡ 9e5793e4-d22f-4229-be58-cddf94b57c98
+# ╔═╡ 535de6fb-d0df-4ca9-8565-f149657cf8f1
+md"""
+We'll define a function called `longest` that will look at every item in a list and return the length of the longest term in the lexicon.   
+
+We'll start by creating two variables:  `maxlength` records the length of the longest word we have encountered;  to start with, it will be `0`;  `longestseen` is the longest string we have seen so far; to start with, it will be the empty string `""`.  We can then use a `for` loop to consider every word in the list successively.  If it is longer than the longest seen so far, we will assign the word to our `longestseen` variable, record its length in the variable `maxlength`.
+
+Finally, we'll remember to put the answer to our question, "What is the longest word in the list?" on the last line of our function so that will be returned as the value of the function.
+"""
+
+# ╔═╡ bff18092-41e9-40c9-9e84-6358832677df
+md"""When we try it on the Gettysburg Address, we can see that the longest term is 11 characters long."""
+
+# ╔═╡ 038a02ae-24db-4185-8bca-2e0ebea580a4
+"Find length of longest string in `wordlist`."
+function longest(wordlist)
+    longestseen = 0
+    for word in wordlist
+        if length(word) > longestseen
+            longestseen = length(word)
+        end
+    end
+    longestseen
+end
+
+# ╔═╡ b8a93192-60a1-4700-989e-bb07be35b66b
+longest(vocablist)
+
+# ╔═╡ 6b15e51d-8f27-4a4f-a179-027ed7aa6821
+md"""## 2. Filtering and mapping collections
+
+When we're working with a collection of data, two things we often want to do are:
+
+1. select items from the list on some criterion
+2. transform the items in the list to some new values
+
+These are so fundamental that Julia includes built-in funnctions for them, `filter` (to select items) and `map` (to transform items).  Their syntax is very similar.  You need to supply two parameters: the list you're working with, obviously, plus a function.  Let's start with an example of the `filter`  function.
+
+"""
+
+# ╔═╡ 4002b30b-7b8a-4fc4-b924-820a46238e26
 md"""
 
 
+When you're preparing textual data for different kinds of analysis, two common tasks are
 
-## The two functions that do most of your scholarship
-
-map(w -> length(w), wds) 
-
-Expanded form:
-
-counts = map(wds) do w
-       (w, length(w))
-       end
-
-maximum(counts)       
-using Statistics
-mean(counts)
+1. removing unwanted characters (e.g., eliminate punctuation characters before making a word list)
+2. converting characters to lower or upper case (e.g., we mant want to make all characters lower so we could get case-insensitive search results by searching on an all-lower case version of a text)
 
 
-wordcounts = map(wds) do w
-       (w, length(w)))
-end
-
-function longestn(wordlist, n)
-    wordcounts = map(wds) do w
-       (w, length(w))
-    end
-    sorted = sort(wordcounts, by = pair -> pair[2]) |> reverse
-    sorted[1:n]
-end
+Recall that we can think of a String value as a collection of characters.   We can do the first of these common tasks with a `filter` function to to filter out all punctuation characters, and the second with a `map` function to translate all characters to lower case form.
 
 
-filter(wordcounts) do (w, c)
-    startswith(w, "consecr")
-end
 """
+
+# ╔═╡ e29c69ef-36b4-462c-adce-649c51b76c6b
+md"""
+!!! warning "? Strings and characters"
+	
+    If you're unsure how a String could also be a Vector of characters, try this:  look at a value by indexing directly into it.  What happens if you try `gburg[1]`?
+"""
+
+# ╔═╡ 370bafec-e9cb-41b1-8d0f-1dc9f0ac7fd6
+md"""
+
+Let's start by getting a text of the Gettysburg Address using the `string_dl` function we just wrote.
+"""
+
+# ╔═╡ 64769358-4854-4161-b4a0-d17877c91181
+gburg = string_dl(url)
+
+# ╔═╡ f15840e1-d68f-4525-9c35-9855946fba2d
+md"""#### Filtering out punctuation characters
+"""
+
+# ╔═╡ 2b880b19-480f-4193-9724-dfaeb91b5142
+md"""
+To remove non-punctuation characters we'll `filter` with the `gburg` collection of characters as the second argument. For the first argument, we need to write a function that returns a `Bool`:  `filter` applies the function to each element in the collection, and keeps only elements that have a `true` value.  
+
+Julia has built-in function `ispunct` that returns `true` if a character is defined in the Unicode specification as a punctuation character, so to find all characters that are *not* punctuation characters, we can just negate that.  In Julia,  you use the `!` sign to express "not", so the anonymous short form of our function can be  
+
+    c -> ! ispunct(c)
+
+"""
+
+# ╔═╡ 7308ed18-1283-489a-ba9c-b89ff3f3e838
+gburg_filtered = filter(c -> ! ispunct(c), gburg)
+
+# ╔═╡ 5698e814-13b8-4c63-9f20-67ea46b82770
+md"""
+
+Of course we could assign our function a name if we preferred, and use
+the function name as a parameter to `filter`.
+
+
+"""
+
+# ╔═╡ 8bd6d4e8-5997-4bfb-bb82-dd194f00482f
+"True if `c` is not a punctuation character in the Unicode specification."
+function notpunct(c)
+	! ispunct(c)
+end
+
+# ╔═╡ 6991a5d0-5e32-4abc-a598-eb2924c320a5
+filter(notpunct, gburg)
+
+# ╔═╡ e6e9a229-42cb-43ed-b6b4-5636d3a468ff
+md"""If we look at the length of the resulting string, we can see that we have indeed filtered some characters out.
+"""
+
+# ╔═╡ 7584a170-a405-41b3-8a69-159b1ba91322
+length(gburg)
+
+# ╔═╡ 35c3959d-74d0-4646-b3d2-4d41f03435ff
+length(gburg_filtered)
+
+# ╔═╡ 0a5359f3-6efa-415d-901e-83f740581b3e
+md"""#### Transforming characters to lower case form
+
+We can now map our filtered text to all lower case form.  `gburg_filtered` will be our second argument; we need a function transforming a character to its lower-case equivalent as the first argument.  This time, we don't need to write one of our own:  Julia has a `lowercase` function that does just that.
+"""
+
+# ╔═╡ 0b711b5d-fccb-4e19-9e3d-4fe06dada8d1
+gburg_lc = map(lowercase, gburg_filtered)
+
+# ╔═╡ a976b05c-587b-4ac5-b1d0-837271379d43
+md"""Filtering creates a new list containing anywhere from 0 elements to all the elements in the original list; all the elements in the new list have values drawn from the original list.
+
+Mapping creates a new list with exactly the same number of elements as the original list; values map be anything produced by the function you give as the first argument.  We can see that our lower-case  version contains exactly the same number of characters as the list we made it from.
+"""
+
+# ╔═╡ 6d462a7d-67fd-40ea-972d-3fc25c5ff1c9
+
+length(gburg_lc) == length(gburg_filtered)
+
+# ╔═╡ 476823ad-b7eb-412b-919e-5471e2d6127c
+md"""
+If we want to see the range of vocabulary in the Gettysburg Address, our new list `gburg_lc` is a good candidate for splitting into words:  we probably don't want "conceived" and "conceived," or "But" and "but" to be treated as searpate words.
+"""
+
+# ╔═╡ 1f8b636c-3c57-46f8-802a-30de44b7ee37
+wordlist(gburg_lc)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -237,7 +338,7 @@ PlutoUI = "~0.7.38"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.7.2"
+julia_version = "1.7.0"
 manifest_format = "2.0"
 
 [[deps.AbstractPlutoDingetjes]]
@@ -457,18 +558,57 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╟─7f697e14-3ad9-4961-bb73-95944f51a429
 # ╠═8987603f-7a1f-411d-a1d8-28ab2fe10d23
 # ╠═c523cfe0-d986-44d6-81d7-5e07dacd5107
-# ╠═0ce39bf8-d54b-4c50-ab22-d8cad0aae45e
-# ╟─64b1e42b-f6c0-43e1-b0f5-a6cb3304ab98
+# ╟─506ab751-3df3-4231-8267-8b15af4567a3
 # ╠═57ab0ed2-01fe-42f1-9d49-19215acaf616
-# ╠═7378c4bb-9303-4201-830d-ac3c8a09fb78
+# ╟─7378c4bb-9303-4201-830d-ac3c8a09fb78
 # ╠═335de2a3-730c-48d0-bbaa-87183291680c
 # ╠═e40b98bf-1aa5-402f-8cfd-8b603ed11e48
+# ╟─4617a47e-a8d6-4a0f-afa3-99e6a6a64eda
+# ╠═14c91157-c923-4eb9-8df7-087bab3b4d92
+# ╟─895d5f0e-d78b-406f-abc5-50f065e526a5
+# ╠═a83976a1-bf57-4350-8138-f46cf34a983f
+# ╟─e53ee8d2-4e6a-4de7-833d-d8f4710535d2
 # ╠═e61b5a71-6a76-4715-bf76-647afecd8c91
-# ╠═059a032b-7452-4f6b-a6c0-cab9ba314042
+# ╟─059a032b-7452-4f6b-a6c0-cab9ba314042
 # ╠═0f5058fe-ffc3-43c5-a6c0-868ff72ae149
-# ╠═199b9886-524c-4241-8864-5e1474d90fff
-# ╟─f3eea46c-75ce-4b43-a183-4a564abf8e77
-# ╠═f042f25f-fd8f-4911-a466-7fe62fc7b99a
-# ╠═9e5793e4-d22f-4229-be58-cddf94b57c98
+# ╟─6ce0474d-4240-4294-8bc2-50376dfd76d9
+# ╠═255e94bc-4dd5-4168-8296-3c9f9cecdee6
+# ╟─ea830b21-c035-4b4a-92d9-c987c0617697
+# ╠═7ea880b7-fdaa-4009-b9d7-704203b1bac3
+# ╟─82812e47-8f3b-4f91-a874-dac2154574ed
+# ╠═788a2138-1569-4933-871e-5d68159b8dd5
+# ╟─5a7d0145-267f-4f7d-9956-0489be8ce6fd
+# ╠═ea8ab664-2fe2-4cdf-a1d9-6d8d77fe7c61
+# ╠═7c8a9cf3-9892-4734-8aae-5e48199fff46
+# ╟─31943c2b-ae63-4a9c-8387-52a21dba2414
+# ╠═0a53480b-35f7-41f8-9e23-799d623ac474
+# ╟─f81bd4bf-4b08-4390-a228-bdc1b81aec22
+# ╠═d58f915a-4ed3-4f5f-8454-931e30c0155c
+# ╟─1e568f29-bf32-4fbb-a143-2505649cf658
+# ╟─44e45c95-2dbb-4086-8326-4df802bf06b3
+# ╟─535de6fb-d0df-4ca9-8565-f149657cf8f1
+# ╟─bff18092-41e9-40c9-9e84-6358832677df
+# ╠═038a02ae-24db-4185-8bca-2e0ebea580a4
+# ╠═b8a93192-60a1-4700-989e-bb07be35b66b
+# ╟─6b15e51d-8f27-4a4f-a179-027ed7aa6821
+# ╟─4002b30b-7b8a-4fc4-b924-820a46238e26
+# ╟─e29c69ef-36b4-462c-adce-649c51b76c6b
+# ╟─370bafec-e9cb-41b1-8d0f-1dc9f0ac7fd6
+# ╠═64769358-4854-4161-b4a0-d17877c91181
+# ╟─f15840e1-d68f-4525-9c35-9855946fba2d
+# ╟─2b880b19-480f-4193-9724-dfaeb91b5142
+# ╠═7308ed18-1283-489a-ba9c-b89ff3f3e838
+# ╟─5698e814-13b8-4c63-9f20-67ea46b82770
+# ╠═8bd6d4e8-5997-4bfb-bb82-dd194f00482f
+# ╠═6991a5d0-5e32-4abc-a598-eb2924c320a5
+# ╟─e6e9a229-42cb-43ed-b6b4-5636d3a468ff
+# ╠═7584a170-a405-41b3-8a69-159b1ba91322
+# ╠═35c3959d-74d0-4646-b3d2-4d41f03435ff
+# ╟─0a5359f3-6efa-415d-901e-83f740581b3e
+# ╠═0b711b5d-fccb-4e19-9e3d-4fe06dada8d1
+# ╟─a976b05c-587b-4ac5-b1d0-837271379d43
+# ╠═6d462a7d-67fd-40ea-972d-3fc25c5ff1c9
+# ╟─476823ad-b7eb-412b-919e-5471e2d6127c
+# ╠═1f8b636c-3c57-46f8-802a-30de44b7ee37
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002

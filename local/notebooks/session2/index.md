@@ -10,4 +10,4 @@ parent: "Pluto notebooks"
 # Session 2: [Lincoln's Gettysburg Address](../../session2/)
 
 
-- Pluto [notebook for session 2](./session)
+- Pluto [notebook for session 2](./session2nb.html)

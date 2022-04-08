@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.18.4
+# v0.17.5
 
 using Markdown
 using InteractiveUtils
@@ -15,7 +15,9 @@ macro bind(def, element)
 end
 
 # ╔═╡ 46f3db46-f0e1-4844-83f5-57353f48d9a2
-using PlutoTeachingTools
+begin
+	using PlutoTeachingTools
+end
 
 # ╔═╡ 1f84b8d6-4f2d-4fe9-bdfc-e7dcc3d70aaa
 begin
@@ -26,6 +28,11 @@ end
 
 # ╔═╡ 6bd575ab-3873-4131-821d-1b3c981a2534
 using PlutoUI
+
+# ╔═╡ d4b3c0de-29a9-4e12-aaeb-ffbadd16d822
+md"""
+> Workshop **session 3** of [*Why we code*](https://neelsmith.github.io/why_we_code/)
+"""
 
 # ╔═╡ 6ed35212-af84-11ec-2c60-cd3e7a4ec044
 md"""
@@ -55,9 +62,6 @@ Every cell in a Pluto notebook is a Julia object!  Recall that this means it has
 
 """
 
-# ╔═╡ 817bb202-f3e9-42c1-8563-3c92922094b1
-
-
 # ╔═╡ 0dcacf9f-6e20-4186-99e2-3d6452c4d6dd
 md"""
 $(@bind f PlutoUI.FilePicker([MIME("text/plain")]))
@@ -66,14 +70,23 @@ $(@bind f PlutoUI.FilePicker([MIME("text/plain")]))
 # ╔═╡ a8147f92-218b-4ec2-92c5-b889c1d96194
 md"""n-gram size: $(@bind n Slider(1:15; default=3, show_value=true))"""
 
+# ╔═╡ 9b07bfe1-6ed5-4dc7-b605-a96eed687349
+md"""Selected n-gram size: $(n)"""
+
 # ╔═╡ d56c84c1-4256-431f-9dce-e1f134d7d583
 md"""Number of n-grams to display: $(@bind maxdisplay Slider(50 : 10 : 500; default=100, show_value=true))"""
+
+# ╔═╡ fa346c73-60b2-42b4-91c3-40e8b3fa197a
+md"Selected number to display: $(maxdisplay)"
 
 # ╔═╡ 3d1d023e-321c-4d25-9212-3a061d9a4f18
 md""">Computing ngrams"""
 
 # ╔═╡ a7dfebb7-e9e8-4040-b71f-28bcef6dd22b
+md"""DO A THING RIGHT HERE."""
 
+# ╔═╡ 792abf30-5fb5-4a90-8872-048e16624dd0
+n
 
 # ╔═╡ 08b8c030-0700-46c0-b452-4d47e8bd35e9
 md"""> 
@@ -104,6 +117,12 @@ tidytext = begin
 	map(c -> lowercase(c), alphas)
 end
 
+# ╔═╡ edc8f1d4-dfea-4e32-a2cc-f902816a1a4f
+chunked = slidingwindow(split(tidytext), n = n)
+
+# ╔═╡ 2fb53792-5ba6-40e4-8aaf-6829c04659ea
+group(chunked)
+
 # ╔═╡ db455f9d-83c8-4217-b114-fe950244eeb6
 isnothing(f) ? "Nothing yet." : f
 
@@ -128,7 +147,7 @@ SplitApplyCombine = "~1.2.1"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.7.2"
+julia_version = "1.7.0"
 manifest_format = "2.0"
 
 [[deps.ANSIColoredPrinters]]
@@ -602,16 +621,21 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 
 # ╔═╡ Cell order:
 # ╟─46f3db46-f0e1-4844-83f5-57353f48d9a2
+# ╟─d4b3c0de-29a9-4e12-aaeb-ffbadd16d822
 # ╟─6ed35212-af84-11ec-2c60-cd3e7a4ec044
-# ╠═bbf1f800-6b5f-457e-b6ff-ba125d09bea7
-# ╠═817bb202-f3e9-42c1-8563-3c92922094b1
+# ╟─bbf1f800-6b5f-457e-b6ff-ba125d09bea7
 # ╠═1f84b8d6-4f2d-4fe9-bdfc-e7dcc3d70aaa
 # ╠═6bd575ab-3873-4131-821d-1b3c981a2534
 # ╟─0dcacf9f-6e20-4186-99e2-3d6452c4d6dd
-# ╟─a8147f92-218b-4ec2-92c5-b889c1d96194
+# ╠═a8147f92-218b-4ec2-92c5-b889c1d96194
+# ╠═9b07bfe1-6ed5-4dc7-b605-a96eed687349
 # ╟─d56c84c1-4256-431f-9dce-e1f134d7d583
+# ╠═fa346c73-60b2-42b4-91c3-40e8b3fa197a
 # ╟─3d1d023e-321c-4d25-9212-3a061d9a4f18
 # ╠═a7dfebb7-e9e8-4040-b71f-28bcef6dd22b
+# ╟─792abf30-5fb5-4a90-8872-048e16624dd0
+# ╠═edc8f1d4-dfea-4e32-a2cc-f902816a1a4f
+# ╠═2fb53792-5ba6-40e4-8aaf-6829c04659ea
 # ╟─ee83b946-8351-4fc0-9d03-058a0769d429
 # ╟─08b8c030-0700-46c0-b452-4d47e8bd35e9
 # ╟─fa5305b8-6573-4319-8aa8-b83bcc3e2d4c

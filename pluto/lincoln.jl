@@ -1,8 +1,14 @@
 ### A Pluto.jl notebook ###
-# v0.18.4
+# v0.17.5
 
 using Markdown
 using InteractiveUtils
+
+# ╔═╡ 11fdbb0f-38c9-444f-ae9d-48032859b266
+begin
+	using PlutoUI
+	using PlutoTeachingTools
+end
 
 # ╔═╡ bfb848da-b77f-44c1-b638-d8da7964c607
 using Downloads
@@ -10,46 +16,81 @@ using Downloads
 # ╔═╡ 86beee9f-cca7-45ed-95e2-43a090899347
 using PlotlyJS
 
-
-
 # ╔═╡ 1cf20b00-f11f-412a-a2cb-5c210c61ad7c
 md"""
-> Workshop session 2 of [*Why we code*](https://neelsmith.github.io/why_we_code/)
+> Workshop **session 2** of [*Why we code*](https://neelsmith.github.io/why_we_code/)
 """
 
 # ╔═╡ 9defd924-b116-11ec-15ab-4d6fd5db5811
 md"""# Lincoln's Gettysburg Address
 
+We can systematically identify specific features of a text that are part of the more complex concept of *style*.  By writing a script to do this, we can both ensure that we are collecting our observations systematically, and easily collect and compare the same observations for other texts.
+
+We'll start by looking at 3 features of Lincoln's Gettysburg Address:
+
+1. length of words (measured in characters)
+2. length of sentences (measured in words)
+3. density of vocabulary (measured by dividing the number of distinct terms in the text by the number of words in the text)
 
 """
+
+# ╔═╡ 8c466e07-07c6-49a7-a521-511b92596a40
+md"""## Preparing our data
+"""
+
+# ╔═╡ d73757dd-c307-4a8e-a2b2-68e6a827729f
+md"""We'll recycle our work in the previous session to:
+
+1. download a text of the Gettysburg Address
+2. filter our punctuation characters
+3. convert all characters to lower cas
+4. split the resulting lower-case text into words
+"""
+
+# ╔═╡ 228b40ac-2748-4ff7-808c-a2afda3a3c9b
+md"#### Code to reuse from last time"
+
+# ╔═╡ 95292926-7a92-40fc-9ee5-aa2046ee343c
+"Break up `s` into a list of words, and sort the list."
+function wordlist(s)
+	words = split(s) |> unique
+	sort(words)
+end
+
+# ╔═╡ 1282a8bd-e1dc-41f1-9401-7173145ed6eb
+"Download contents of `url` as a String value"
+function string_dl(url)
+	Downloads.download(url) |> read |> String
+end
 
 # ╔═╡ 3b11295a-8a96-4da2-b1d3-5e13fc149077
 url = "https://raw.githubusercontent.com/neelsmith/why_we_code/main/data/lincoln/hay.txt"
 
-# ╔═╡ ba7384e1-2e48-436f-8c2c-eb91f39ef8fa
-gburg = Downloads.download(url) |> read |> String
+# ╔═╡ aeb67d54-65a3-4034-8e2f-12853e1dd021
+gburg = string_dl(url)
 
-# ╔═╡ 95318648-90b3-438a-8df7-7be84d9f8b3b
- wds = split(gburg)
+# ╔═╡ ca546151-e55e-4a7b-bb2f-06bae6116f90
+gburg_filtered = filter(c -> ! ispunct(c), gburg)
 
+# ╔═╡ 88d818cf-e713-46cf-8732-49d868eac9f0
+gburg_lc = map(lowercase, gburg_filtered)
 
-# ╔═╡ 2ec3b454-dbb7-4e72-a65f-0209150939b7
-stripped = map(wds) do w 
-	lc = lowercase(w) 
-	filter(c -> islowercase(c), lc) 
-end
+# ╔═╡ 15e4dba9-90bc-4bef-9753-5aae1f719291
+vocab = wordlist(gburg_lc)
+
+# ╔═╡ 9d781d9b-92e5-4683-846a-62d7e513ab40
+md"""## Thinking about word length
+
+"""
 
 # ╔═╡ f468859a-4b12-4e6d-a1a4-5dac37de63bb
-wordlens = map(stripped) do w 
+wordlens = map(vocab) do w 
 	(w, length(w)) 
 end
 
 
 # ╔═╡ ccada833-11cc-485f-966d-30d2c9f33c7e
-
 sorted = sort(unique(wordlens), by=pair -> pair[2], rev = true)
-
-
 
 # ╔═╡ 740f68b2-95d0-4b3e-92fc-4e349ff18b6c
 xlbls = map( pair -> pair[1], sorted) 
@@ -57,27 +98,38 @@ xlbls = map( pair -> pair[1], sorted)
 # ╔═╡ db96f369-5c2e-4157-8907-31a8a9b17d3b
 yvalues = map( pair -> pair[2], sorted)
 
-# ╔═╡ 6e0e01ad-37a3-49fa-9d47-6e1adff184cc
-Plot(bar(x = xlbls, y = yvalues), w = 800, h = 600)
+# ╔═╡ 5cfd968b-b0ee-4fcc-84b4-500a301d49b0
+layout = Layout(width = 1200, height = 400, title = "Vocabulary sorted by word length")
 
-
+# ╔═╡ 9cc6e02a-6ac5-497b-ac44-5c1f7176978f
+Plot(bar(x = xlbls, y = yvalues), layout)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
 Downloads = "f43a241f-c20a-4ad4-852c-f6b1247861c6"
 PlotlyJS = "f0f68f2c-4968-5e81-91da-67840de0976a"
+PlutoTeachingTools = "661c6b06-c737-4d37-b85c-46df65de6f69"
+PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 
 [compat]
 PlotlyJS = "~0.18.8"
+PlutoTeachingTools = "~0.1.4"
+PlutoUI = "~0.7.38"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.7.2"
+julia_version = "1.7.0"
 manifest_format = "2.0"
+
+[[deps.AbstractPlutoDingetjes]]
+deps = ["Pkg"]
+git-tree-sha1 = "8eaf9f1b4921132a4cff3f36a1d9ba923b14a481"
+uuid = "6e696c72-6542-2067-7265-42206c756150"
+version = "1.1.4"
 
 [[deps.ArgTools]]
 uuid = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
@@ -185,6 +237,23 @@ version = "0.9.17"
 deps = ["MacroTools", "Test"]
 git-tree-sha1 = "6187bb2d5fcbb2007c39e7ac53308b0d371124bd"
 uuid = "9fb69e20-1954-56bb-a84f-559cc56a8ff7"
+version = "0.2.2"
+
+[[deps.Hyperscript]]
+deps = ["Test"]
+git-tree-sha1 = "8d511d5b81240fc8e6802386302675bdf47737b9"
+uuid = "47d2ed2b-36de-50cf-bf87-49c2cf4b8b91"
+version = "0.0.4"
+
+[[deps.HypertextLiteral]]
+git-tree-sha1 = "2b078b5a615c6c0396c77810d92ee8c6f470d238"
+uuid = "ac1192a8-f4b3-4bfe-ba22-af5b92cd3ab2"
+version = "0.9.3"
+
+[[deps.IOCapture]]
+deps = ["Logging", "Random"]
+git-tree-sha1 = "f7be53659ab06ddc986428d3a9dcc95f6fa6705a"
+uuid = "b5f81e59-6552-4d32-b1f0-c071b021bf89"
 version = "0.2.2"
 
 [[deps.IniFile]]
@@ -351,6 +420,18 @@ git-tree-sha1 = "53d6325e14d3bdb85fd387a085075f36082f35a3"
 uuid = "f0f68f2c-4968-5e81-91da-67840de0976a"
 version = "0.18.8"
 
+[[deps.PlutoTeachingTools]]
+deps = ["LaTeXStrings", "Markdown", "PlutoUI", "Random"]
+git-tree-sha1 = "e2b63ee022e0b20f43fcd15cda3a9047f449e3b4"
+uuid = "661c6b06-c737-4d37-b85c-46df65de6f69"
+version = "0.1.4"
+
+[[deps.PlutoUI]]
+deps = ["AbstractPlutoDingetjes", "Base64", "ColorTypes", "Dates", "Hyperscript", "HypertextLiteral", "IOCapture", "InteractiveUtils", "JSON", "Logging", "Markdown", "Random", "Reexport", "UUIDs"]
+git-tree-sha1 = "670e559e5c8e191ded66fa9ea89c97f10376bb4c"
+uuid = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
+version = "0.7.38"
+
 [[deps.Preferences]]
 deps = ["TOML"]
 git-tree-sha1 = "d3538e7f8a790dc8903519090857ef8e1283eecd"
@@ -480,18 +561,27 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 """
 
 # ╔═╡ Cell order:
-# ╠═1cf20b00-f11f-412a-a2cb-5c210c61ad7c
+# ╟─11fdbb0f-38c9-444f-ae9d-48032859b266
+# ╟─1cf20b00-f11f-412a-a2cb-5c210c61ad7c
 # ╟─9defd924-b116-11ec-15ab-4d6fd5db5811
-# ╟─3b11295a-8a96-4da2-b1d3-5e13fc149077
+# ╟─8c466e07-07c6-49a7-a521-511b92596a40
+# ╟─d73757dd-c307-4a8e-a2b2-68e6a827729f
+# ╟─228b40ac-2748-4ff7-808c-a2afda3a3c9b
 # ╠═bfb848da-b77f-44c1-b638-d8da7964c607
-# ╠═ba7384e1-2e48-436f-8c2c-eb91f39ef8fa
-# ╠═95318648-90b3-438a-8df7-7be84d9f8b3b
-# ╠═2ec3b454-dbb7-4e72-a65f-0209150939b7
-# ╠═f468859a-4b12-4e6d-a1a4-5dac37de63bb
-# ╠═ccada833-11cc-485f-966d-30d2c9f33c7e
+# ╟─95292926-7a92-40fc-9ee5-aa2046ee343c
+# ╟─1282a8bd-e1dc-41f1-9401-7173145ed6eb
+# ╟─3b11295a-8a96-4da2-b1d3-5e13fc149077
+# ╟─aeb67d54-65a3-4034-8e2f-12853e1dd021
+# ╟─ca546151-e55e-4a7b-bb2f-06bae6116f90
+# ╟─88d818cf-e713-46cf-8732-49d868eac9f0
+# ╠═15e4dba9-90bc-4bef-9753-5aae1f719291
+# ╟─9d781d9b-92e5-4683-846a-62d7e513ab40
+# ╟─f468859a-4b12-4e6d-a1a4-5dac37de63bb
+# ╟─ccada833-11cc-485f-966d-30d2c9f33c7e
 # ╠═86beee9f-cca7-45ed-95e2-43a090899347
-# ╠═740f68b2-95d0-4b3e-92fc-4e349ff18b6c
-# ╠═db96f369-5c2e-4157-8907-31a8a9b17d3b
-# ╠═6e0e01ad-37a3-49fa-9d47-6e1adff184cc
+# ╟─740f68b2-95d0-4b3e-92fc-4e349ff18b6c
+# ╟─db96f369-5c2e-4157-8907-31a8a9b17d3b
+# ╠═5cfd968b-b0ee-4fcc-84b4-500a301d49b0
+# ╠═9cc6e02a-6ac5-497b-ac44-5c1f7176978f
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
