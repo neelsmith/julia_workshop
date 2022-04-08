@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.18.4
+# v0.17.5
 
 using Markdown
 using InteractiveUtils
@@ -176,13 +176,13 @@ for VARIABLE_NAME in COLLECTION
 end
 ```
 
-The `for` loop cycles through every item in your collection, and assigns it to the variable name you supply.  Let's see how we can use a `for` to find the *longest* word in our vocabulary list from the Gettysburg Address.
+The `for` loop cycles through every item in your collection, and assigns it to the variable name you supply.  Let's see how we can use a `for` to find the length of the *longest* word in our vocabulary list from the Gettysburg Address.
 
 """
 
 # ╔═╡ 535de6fb-d0df-4ca9-8565-f149657cf8f1
 md"""
-We'll define a function called `longest` that will look at every item in a list and return the length of longest term in the lexicon.   
+We'll define a function called `longest` that will look at every item in a list and return the length of the longest term in the lexicon.   
 
 We'll start by creating two variables:  `maxlength` records the length of the longest word we have encountered;  to start with, it will be `0`;  `longestseen` is the longest string we have seen so far; to start with, it will be the empty string `""`.  We can then use a `for` loop to consider every word in the list successively.  If it is longer than the longest seen so far, we will assign the word to our `longestseen` variable, record its length in the variable `maxlength`.
 
@@ -210,73 +210,117 @@ longest(vocablist)
 # ╔═╡ 6b15e51d-8f27-4a4f-a179-027ed7aa6821
 md"""## 2. Filtering and mapping collections
 
+When we're working with a collection of data, two things we often want to do are:
 
+1. select items from the list on some criterion
+2. transform the items in the list to some new values
+
+These are so fundamental that Julia includes built-in funnctions for them, `filter` (to select items) and `map` (to transform items).  Their syntax is very similar.  You need to supply two parameters: the list you're working with, obviously, plus a function.  Let's start with an example of the `filter`  function.
 
 """
 
 # ╔═╡ 4002b30b-7b8a-4fc4-b924-820a46238e26
 md"""
-Maybe filter chars!
 
-Map words to lower case
 
+When you're preparing textual data for different kinds of analysis, two common tasks are
+
+1. removing unwanted characters (e.g., eliminate punctuation characters before making a word list)
+2. converting characters to lower or upper case (e.g., we mant want to make all characters lower so we could get case-insensitive search results by searching on an all-lower case version of a text)
+
+
+Recall that we can think of a String value as a collection of characters.   We can do the first of these common tasks with a `filter` function to to filter out all punctuation characters, and the second with a `map` function to translate all characters to lower case form.
+
+
+"""
+
+# ╔═╡ e29c69ef-36b4-462c-adce-649c51b76c6b
+md"""
+!!! warning "? Strings and characters"
+	
+    If you're unsure how a String could also be a Vector of characters, try this:  look at a value by indexing directly into it.  What happens if you try `gburg[1]`?
+"""
+
+# ╔═╡ 370bafec-e9cb-41b1-8d0f-1dc9f0ac7fd6
+md"""
+
+Let's start by getting a text of the Gettysburg Address using the `string_dl` function we just wrote.
 """
 
 # ╔═╡ 64769358-4854-4161-b4a0-d17877c91181
 gburg = string_dl(url)
 
+# ╔═╡ f15840e1-d68f-4525-9c35-9855946fba2d
+md"""#### Filtering out punctuation characters
+"""
+
+# ╔═╡ 2b880b19-480f-4193-9724-dfaeb91b5142
+md"""
+To remove non-punctuation characters we'll `filter` with the `gburg` collection of characters as the second argument. For the first argument, we need to write a function that returns a `Bool`:  `filter` applies the function to each element in the collection, and keeps only elements that have a `true` value.  
+
+Julia has built-in function `ispunct` that returns `true` if a character is defined in the Unicode specification as a punctuation character, so to find all characters that are *not* punctuation characters, we can just negate that.  In Julia,  you use the `!` sign to express "not", so the anonymous short form of our function can be  
+
+    c -> ! ispunct(c)
+
+"""
+
 # ╔═╡ 7308ed18-1283-489a-ba9c-b89ff3f3e838
-filter(c -> ! ispunct(c), gburg) |> length
+gburg_filtered = filter(c -> ! ispunct(c), gburg)
 
-# ╔═╡ 6d462a7d-67fd-40ea-972d-3fc25c5ff1c9
-lowercase(gburg) |> wordlist |> length
-
-# ╔═╡ 1f8b636c-3c57-46f8-802a-30de44b7ee37
-lcwords = lowercase(gburg) |> wordlist
-
-# ╔═╡ 3e320b9b-f961-42e6-8380-73ddd544d829
-lenn = map(wd -> length(wd), lcwords) |> maximum
-
-# ╔═╡ eff606c2-3572-48ce-890b-3d37fdb0ae4a
-filter(wd -> length(wd) == 11, vocablist)
-
-# ╔═╡ 9e5793e4-d22f-4229-be58-cddf94b57c98
+# ╔═╡ 5698e814-13b8-4c63-9f20-67ea46b82770
 md"""
 
+Of course we could assign our function a name if we preferred, and use
+the function name as a parameter to `filter`.
 
 
-## The two functions that do most of your scholarship
-
-map(w -> length(w), wds) 
-
-Expanded form:
-
-counts = map(wds) do w
-       (w, length(w))
-       end
-
-maximum(counts)       
-using Statistics
-mean(counts)
-
-
-wordcounts = map(wds) do w
-       (w, length(w)))
-end
-
-function longestn(wordlist, n)
-    wordcounts = map(wds) do w
-       (w, length(w))
-    end
-    sorted = sort(wordcounts, by = pair -> pair[2]) |> reverse
-    sorted[1:n]
-end
-
-
-filter(wordcounts) do (w, c)
-    startswith(w, "consecr")
-end
 """
+
+# ╔═╡ 8bd6d4e8-5997-4bfb-bb82-dd194f00482f
+"True if `c` is not a punctuation character in the Unicode specification."
+function notpunct(c)
+	! ispunct(c)
+end
+
+# ╔═╡ 6991a5d0-5e32-4abc-a598-eb2924c320a5
+filter(notpunct, gburg)
+
+# ╔═╡ e6e9a229-42cb-43ed-b6b4-5636d3a468ff
+md"""If we look at the length of the resulting string, we can see that we have indeed filtered some characters out.
+"""
+
+# ╔═╡ 7584a170-a405-41b3-8a69-159b1ba91322
+length(gburg)
+
+# ╔═╡ 35c3959d-74d0-4646-b3d2-4d41f03435ff
+length(gburg_filtered)
+
+# ╔═╡ 0a5359f3-6efa-415d-901e-83f740581b3e
+md"""#### Transforming characters to lower case form
+
+We can now map our filtered text to all lower case form.  `gburg_filtered` will be our second argument; we need a function transforming a character to its lower-case equivalent as the first argument.  This time, we don't need to write one of our own:  Julia has a `lowercase` function that does just that.
+"""
+
+# ╔═╡ 0b711b5d-fccb-4e19-9e3d-4fe06dada8d1
+gburg_lc = map(lowercase, gburg_filtered)
+
+# ╔═╡ a976b05c-587b-4ac5-b1d0-837271379d43
+md"""Filtering creates a new list containing anywhere from 0 elements to all the elements in the original list; all the elements in the new list have values drawn from the original list.
+
+Mapping creates a new list with exactly the same number of elements as the original list; values map be anything produced by the function you give as the first argument.  We can see that our lower-case  version contains exactly the same number of characters as the list we made it from.
+"""
+
+# ╔═╡ 6d462a7d-67fd-40ea-972d-3fc25c5ff1c9
+
+length(gburg_lc) == length(gburg_filtered)
+
+# ╔═╡ 476823ad-b7eb-412b-919e-5471e2d6127c
+md"""
+If we want to see the range of vocabulary in the Gettysburg Address, our new list `gburg_lc` is a good candidate for splitting into words:  we probably don't want "conceived" and "conceived," or "But" and "but" to be treated as searpate words.
+"""
+
+# ╔═╡ 1f8b636c-3c57-46f8-802a-30de44b7ee37
+wordlist(gburg_lc)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -294,7 +338,7 @@ PlutoUI = "~0.7.38"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.7.2"
+julia_version = "1.7.0"
 manifest_format = "2.0"
 
 [[deps.AbstractPlutoDingetjes]]
@@ -543,17 +587,28 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╟─1e568f29-bf32-4fbb-a143-2505649cf658
 # ╟─44e45c95-2dbb-4086-8326-4df802bf06b3
 # ╟─535de6fb-d0df-4ca9-8565-f149657cf8f1
-# ╠═bff18092-41e9-40c9-9e84-6358832677df
+# ╟─bff18092-41e9-40c9-9e84-6358832677df
 # ╠═038a02ae-24db-4185-8bca-2e0ebea580a4
 # ╠═b8a93192-60a1-4700-989e-bb07be35b66b
-# ╠═6b15e51d-8f27-4a4f-a179-027ed7aa6821
-# ╠═4002b30b-7b8a-4fc4-b924-820a46238e26
+# ╟─6b15e51d-8f27-4a4f-a179-027ed7aa6821
+# ╟─4002b30b-7b8a-4fc4-b924-820a46238e26
+# ╟─e29c69ef-36b4-462c-adce-649c51b76c6b
+# ╟─370bafec-e9cb-41b1-8d0f-1dc9f0ac7fd6
 # ╠═64769358-4854-4161-b4a0-d17877c91181
+# ╟─f15840e1-d68f-4525-9c35-9855946fba2d
+# ╟─2b880b19-480f-4193-9724-dfaeb91b5142
 # ╠═7308ed18-1283-489a-ba9c-b89ff3f3e838
+# ╟─5698e814-13b8-4c63-9f20-67ea46b82770
+# ╠═8bd6d4e8-5997-4bfb-bb82-dd194f00482f
+# ╠═6991a5d0-5e32-4abc-a598-eb2924c320a5
+# ╟─e6e9a229-42cb-43ed-b6b4-5636d3a468ff
+# ╠═7584a170-a405-41b3-8a69-159b1ba91322
+# ╠═35c3959d-74d0-4646-b3d2-4d41f03435ff
+# ╟─0a5359f3-6efa-415d-901e-83f740581b3e
+# ╠═0b711b5d-fccb-4e19-9e3d-4fe06dada8d1
+# ╟─a976b05c-587b-4ac5-b1d0-837271379d43
 # ╠═6d462a7d-67fd-40ea-972d-3fc25c5ff1c9
+# ╟─476823ad-b7eb-412b-919e-5471e2d6127c
 # ╠═1f8b636c-3c57-46f8-802a-30de44b7ee37
-# ╠═3e320b9b-f961-42e6-8380-73ddd544d829
-# ╠═eff606c2-3572-48ce-890b-3d37fdb0ae4a
-# ╠═9e5793e4-d22f-4229-be58-cddf94b57c98
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002

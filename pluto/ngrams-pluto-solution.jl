@@ -4,118 +4,147 @@
 using Markdown
 using InteractiveUtils
 
-# ╔═╡ 11fdbb0f-38c9-444f-ae9d-48032859b266
+# This Pluto notebook uses @bind for interactivity. When running this notebook outside of Pluto, the following 'mock version' of @bind gives bound variables a default value (instead of an error).
+macro bind(def, element)
+    quote
+        local iv = try Base.loaded_modules[Base.PkgId(Base.UUID("6e696c72-6542-2067-7265-42206c756150"), "AbstractPlutoDingetjes")].Bonds.initial_value catch; b -> missing; end
+        local el = $(esc(element))
+        global $(esc(def)) = Core.applicable(Base.get, el) ? Base.get(el) : iv(el)
+        el
+    end
+end
+
+# ╔═╡ 46f3db46-f0e1-4844-83f5-57353f48d9a2
 begin
-	using PlutoUI
 	using PlutoTeachingTools
 end
 
-# ╔═╡ bfb848da-b77f-44c1-b638-d8da7964c607
-using Downloads
+# ╔═╡ 1f84b8d6-4f2d-4fe9-bdfc-e7dcc3d70aaa
+begin
+	using PlotlyJS
+	using CitableBase
+	using SplitApplyCombine
+end
 
-# ╔═╡ 86beee9f-cca7-45ed-95e2-43a090899347
-using PlotlyJS
+# ╔═╡ 6bd575ab-3873-4131-821d-1b3c981a2534
+using PlutoUI
 
-# ╔═╡ 1cf20b00-f11f-412a-a2cb-5c210c61ad7c
+# ╔═╡ d4b3c0de-29a9-4e12-aaeb-ffbadd16d822
 md"""
-> Workshop **session 2** of [*Why we code*](https://neelsmith.github.io/why_we_code/)
+> Workshop **session 3** of [*Why we code*](https://neelsmith.github.io/why_we_code/)
 """
 
-# ╔═╡ 9defd924-b116-11ec-15ab-4d6fd5db5811
-md"""# Lincoln's Gettysburg Address
+# ╔═╡ 6ed35212-af84-11ec-2c60-cd3e7a4ec044
+md"""
+# Exploring n-grams
 
-We can systematically identify specific features of a text that are part of the more complex concept of *style*.  By writing a script to do this, we can both ensure that we are collecting our observations systematically, and easily collect and compare the same observations for other texts.
+In this workshop session, we'll use Julia in a different environment:  Pluto notebooks. We will build an interactive tool to explore patterns of language in different openly licensed translations of the Bible in multiple languages. 
 
-We'll start by looking at 3 features of Lincoln's Gettysburg Address:
+## Overview
 
-1. length of words (measured in characters)
-2. length of sentences (measured in words)
-3. density of vocabulary (measured by dividing the number of distinct terms in the text by the number of words in the text)
+We will look at *n-grams* (that is, sequences of `n` successive terms) in a text.
+These patterns prompt questions like: 
+
+- How do repeated sequences of terms reflect the structure and syntax of different languages? 
+- How do n-grams point us towards patterns in the translation of concepts in the source text? 
+- Can we identify common features across languages?
+
 
 """
 
-# ╔═╡ 8c466e07-07c6-49a7-a521-511b92596a40
-md"""## Preparing our data
+# ╔═╡ bbf1f800-6b5f-457e-b6ff-ba125d09bea7
+md"""## Pluto notebooks
+
+First let's get familiar with our new environment: Pluto notebooks.
+
+
+Every cell in a Pluto notebook is a Julia object!  Recall that this means it has a *value*.  A Pluto notebook server will display the *value* of the cell: you can show or hide the Julia expression defining the cell's value using the 
+
 """
 
-# ╔═╡ d73757dd-c307-4a8e-a2b2-68e6a827729f
-md"""We'll recycle our work in the previous session to:
-
-1. download a text of the Gettysburg Address
-2. filter our punctuation characters
-3. convert all characters to lower cas
-4. split the resulting lower-case text into words
+# ╔═╡ 0dcacf9f-6e20-4186-99e2-3d6452c4d6dd
+md"""
+$(@bind f PlutoUI.FilePicker([MIME("text/plain")]))
 """
 
-# ╔═╡ 228b40ac-2748-4ff7-808c-a2afda3a3c9b
-md"#### Code to reuse from last time"
+# ╔═╡ a8147f92-218b-4ec2-92c5-b889c1d96194
+md"""n-gram size: $(@bind n Slider(1:15; default=3, show_value=true))"""
 
-# ╔═╡ 95292926-7a92-40fc-9ee5-aa2046ee343c
-"Break up `s` into a list of words, and sort the list."
-function wordlist(s)
-	words = split(s) |> unique
-	sort(words)
+# ╔═╡ 9b07bfe1-6ed5-4dc7-b605-a96eed687349
+md"""Selected n-gram size: $(n)"""
+
+# ╔═╡ d56c84c1-4256-431f-9dce-e1f134d7d583
+md"""Number of n-grams to display: $(@bind maxdisplay Slider(50 : 10 : 500; default=100, show_value=true))"""
+
+# ╔═╡ fa346c73-60b2-42b4-91c3-40e8b3fa197a
+md"Selected number to display: $(maxdisplay)"
+
+# ╔═╡ 3d1d023e-321c-4d25-9212-3a061d9a4f18
+md""">Computing ngrams"""
+
+# ╔═╡ a7dfebb7-e9e8-4040-b71f-28bcef6dd22b
+md"""DO A THING RIGHT HERE."""
+
+# ╔═╡ 792abf30-5fb5-4a90-8872-048e16624dd0
+n
+
+# ╔═╡ 08b8c030-0700-46c0-b452-4d47e8bd35e9
+md"""> 
+>
+> Data
+"""
+
+# ╔═╡ b68483f8-0f72-4907-922b-33dce51d888f
+lines = isnothing(f) ? [] : split(String(f["data"]), "\n")
+
+# ╔═╡ fa5305b8-6573-4319-8aa8-b83bcc3e2d4c
+fulltext = begin
+	re = r"([^ ]+) ([^ ]+) (.+)"
+	passages = []
+	for ln in lines
+		m = match(re, ln)
+		if ! isnothing(m)
+			(bk, ref, psg) = m.captures
+			push!(passages, psg)
+		end
+	end
+	join(passages," ")
 end
 
-# ╔═╡ 1282a8bd-e1dc-41f1-9401-7173145ed6eb
-"Download contents of `url` as a String value"
-function string_dl(url)
-	Downloads.download(url) |> read |> String
+# ╔═╡ ee83b946-8351-4fc0-9d03-058a0769d429
+tidytext = begin
+	alphas = filter(c -> ! ispunct(c), fulltext)
+	map(c -> lowercase(c), alphas)
 end
 
-# ╔═╡ 3b11295a-8a96-4da2-b1d3-5e13fc149077
-url = "https://raw.githubusercontent.com/neelsmith/why_we_code/main/data/lincoln/hay.txt"
+# ╔═╡ edc8f1d4-dfea-4e32-a2cc-f902816a1a4f
+chunked = slidingwindow(split(tidytext), n = n)
 
-# ╔═╡ aeb67d54-65a3-4034-8e2f-12853e1dd021
-gburg = string_dl(url)
+# ╔═╡ d182a72d-b0ec-4bcd-986d-206fea6fb7a5
 
-# ╔═╡ ca546151-e55e-4a7b-bb2f-06bae6116f90
-gburg_filtered = filter(c -> ! ispunct(c), gburg)
+chunked[1]
 
-# ╔═╡ 88d818cf-e713-46cf-8732-49d868eac9f0
-gburg_lc = map(lowercase, gburg_filtered)
+# ╔═╡ 2fb53792-5ba6-40e4-8aaf-6829c04659ea
+group(chunked)
 
-# ╔═╡ 15e4dba9-90bc-4bef-9753-5aae1f719291
-vocab = wordlist(gburg_lc)
-
-# ╔═╡ 9d781d9b-92e5-4683-846a-62d7e513ab40
-md"""## Thinking about word length
-
-"""
-
-# ╔═╡ f468859a-4b12-4e6d-a1a4-5dac37de63bb
-wordlens = map(vocab) do w 
-	(w, length(w)) 
-end
-
-
-# ╔═╡ ccada833-11cc-485f-966d-30d2c9f33c7e
-sorted = sort(unique(wordlens), by=pair -> pair[2], rev = true)
-
-# ╔═╡ 740f68b2-95d0-4b3e-92fc-4e349ff18b6c
-xlbls = map( pair -> pair[1], sorted) 
-
-# ╔═╡ db96f369-5c2e-4157-8907-31a8a9b17d3b
-yvalues = map( pair -> pair[2], sorted)
-
-# ╔═╡ 5cfd968b-b0ee-4fcc-84b4-500a301d49b0
-layout = Layout(width = 1200, height = 400, title = "Vocabulary sorted by word length")
-
-# ╔═╡ 9cc6e02a-6ac5-497b-ac44-5c1f7176978f
-Plot(bar(x = xlbls, y = yvalues), layout)
+# ╔═╡ db455f9d-83c8-4217-b114-fe950244eeb6
+isnothing(f) ? "Nothing yet." : f
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
-Downloads = "f43a241f-c20a-4ad4-852c-f6b1247861c6"
+CitableBase = "d6f014bd-995c-41bd-9893-703339864534"
 PlotlyJS = "f0f68f2c-4968-5e81-91da-67840de0976a"
 PlutoTeachingTools = "661c6b06-c737-4d37-b85c-46df65de6f69"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
+SplitApplyCombine = "03a91e81-4c3e-53e1-a0a4-9c0c8f19dd66"
 
 [compat]
+CitableBase = "~10.2.1"
 PlotlyJS = "~0.18.8"
 PlutoTeachingTools = "~0.1.4"
 PlutoUI = "~0.7.38"
+SplitApplyCombine = "~1.2.1"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
@@ -124,6 +153,11 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.7.0"
 manifest_format = "2.0"
+
+[[deps.ANSIColoredPrinters]]
+git-tree-sha1 = "574baf8110975760d391c710b6341da1afa48d8c"
+uuid = "a4c015fc-c6ff-483c-b24f-f7ea428134e9"
+version = "0.0.1"
 
 [[deps.AbstractPlutoDingetjes]]
 deps = ["Pkg"]
@@ -157,6 +191,12 @@ deps = ["Base64", "BinDeps", "Distributed", "JSExpr", "JSON", "Lazy", "Logging",
 git-tree-sha1 = "08d0b679fd7caa49e2bca9214b131289e19808c0"
 uuid = "ad839575-38b3-5650-b840-f874b8c74a25"
 version = "0.12.5"
+
+[[deps.CitableBase]]
+deps = ["DocStringExtensions", "Documenter", "HTTP", "Test"]
+git-tree-sha1 = "f36ebc4d2ebba949ef556f84fe240827af60eb40"
+uuid = "d6f014bd-995c-41bd-9893-703339864534"
+version = "10.2.1"
 
 [[deps.ColorSchemes]]
 deps = ["ColorTypes", "Colors", "FixedPointNumbers", "Random"]
@@ -198,6 +238,12 @@ uuid = "ade2ca70-3891-5945-98fb-dc099432e06a"
 deps = ["Mmap"]
 uuid = "8bb1440f-4735-579b-a4ab-409b98df4dab"
 
+[[deps.Dictionaries]]
+deps = ["Indexing", "Random"]
+git-tree-sha1 = "7e73a524c6c282e341de2b046e481abedbabd073"
+uuid = "85a47980-9c8c-11e8-2b9f-f7ca1fa99fb4"
+version = "0.3.19"
+
 [[deps.Distributed]]
 deps = ["Random", "Serialization", "Sockets"]
 uuid = "8ba89e20-285c-5b6f-9357-94700520ee1b"
@@ -207,6 +253,12 @@ deps = ["LibGit2"]
 git-tree-sha1 = "b19534d1895d702889b219c382a6e18010797f0b"
 uuid = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
 version = "0.8.6"
+
+[[deps.Documenter]]
+deps = ["ANSIColoredPrinters", "Base64", "Dates", "DocStringExtensions", "IOCapture", "InteractiveUtils", "JSON", "LibGit2", "Logging", "Markdown", "REPL", "Test", "Unicode"]
+git-tree-sha1 = "7d9a46421aef53cbd6b8ecc40c3dcbacbceaf40e"
+uuid = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+version = "0.27.15"
 
 [[deps.Downloads]]
 deps = ["ArgTools", "LibCURL", "NetworkOptions"]
@@ -255,6 +307,11 @@ deps = ["Logging", "Random"]
 git-tree-sha1 = "f7be53659ab06ddc986428d3a9dcc95f6fa6705a"
 uuid = "b5f81e59-6552-4d32-b1f0-c071b021bf89"
 version = "0.2.2"
+
+[[deps.Indexing]]
+git-tree-sha1 = "ce1566720fd6b19ff3411404d4b977acd4814f9f"
+uuid = "313cdc1a-70c2-5d6a-ae34-0150d3930a38"
+version = "1.1.1"
 
 [[deps.IniFile]]
 git-tree-sha1 = "f550e6e32074c939295eb5ea6de31849ac2c9625"
@@ -394,9 +451,9 @@ version = "0.12.3"
 
 [[deps.Parsers]]
 deps = ["Dates"]
-git-tree-sha1 = "621f4f3b4977325b9128d5fae7a8b4829a0c2222"
+git-tree-sha1 = "85b5da0fa43588c75bb1ff986493443f821c70b7"
 uuid = "69de0a69-1ddd-5017-9359-2bf0b02dc9f0"
-version = "2.2.4"
+version = "2.2.3"
 
 [[deps.Pidfile]]
 deps = ["FileWatching", "Test"]
@@ -473,6 +530,12 @@ uuid = "6462fe0b-24de-5631-8697-dd941f90decc"
 [[deps.SparseArrays]]
 deps = ["LinearAlgebra", "Random"]
 uuid = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
+
+[[deps.SplitApplyCombine]]
+deps = ["Dictionaries", "Indexing"]
+git-tree-sha1 = "35efd62f6f8d9142052d9c7a84e35cd1f9d2db29"
+uuid = "03a91e81-4c3e-53e1-a0a4-9c0c8f19dd66"
+version = "1.2.1"
 
 [[deps.Statistics]]
 deps = ["LinearAlgebra", "SparseArrays"]
@@ -561,27 +624,27 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 """
 
 # ╔═╡ Cell order:
-# ╟─11fdbb0f-38c9-444f-ae9d-48032859b266
-# ╟─1cf20b00-f11f-412a-a2cb-5c210c61ad7c
-# ╟─9defd924-b116-11ec-15ab-4d6fd5db5811
-# ╟─8c466e07-07c6-49a7-a521-511b92596a40
-# ╟─d73757dd-c307-4a8e-a2b2-68e6a827729f
-# ╟─228b40ac-2748-4ff7-808c-a2afda3a3c9b
-# ╠═bfb848da-b77f-44c1-b638-d8da7964c607
-# ╟─95292926-7a92-40fc-9ee5-aa2046ee343c
-# ╟─1282a8bd-e1dc-41f1-9401-7173145ed6eb
-# ╟─3b11295a-8a96-4da2-b1d3-5e13fc149077
-# ╟─aeb67d54-65a3-4034-8e2f-12853e1dd021
-# ╟─ca546151-e55e-4a7b-bb2f-06bae6116f90
-# ╟─88d818cf-e713-46cf-8732-49d868eac9f0
-# ╠═15e4dba9-90bc-4bef-9753-5aae1f719291
-# ╟─9d781d9b-92e5-4683-846a-62d7e513ab40
-# ╟─f468859a-4b12-4e6d-a1a4-5dac37de63bb
-# ╟─ccada833-11cc-485f-966d-30d2c9f33c7e
-# ╠═86beee9f-cca7-45ed-95e2-43a090899347
-# ╟─740f68b2-95d0-4b3e-92fc-4e349ff18b6c
-# ╟─db96f369-5c2e-4157-8907-31a8a9b17d3b
-# ╠═5cfd968b-b0ee-4fcc-84b4-500a301d49b0
-# ╠═9cc6e02a-6ac5-497b-ac44-5c1f7176978f
+# ╟─46f3db46-f0e1-4844-83f5-57353f48d9a2
+# ╟─d4b3c0de-29a9-4e12-aaeb-ffbadd16d822
+# ╟─6ed35212-af84-11ec-2c60-cd3e7a4ec044
+# ╟─bbf1f800-6b5f-457e-b6ff-ba125d09bea7
+# ╠═1f84b8d6-4f2d-4fe9-bdfc-e7dcc3d70aaa
+# ╠═6bd575ab-3873-4131-821d-1b3c981a2534
+# ╟─0dcacf9f-6e20-4186-99e2-3d6452c4d6dd
+# ╠═a8147f92-218b-4ec2-92c5-b889c1d96194
+# ╠═9b07bfe1-6ed5-4dc7-b605-a96eed687349
+# ╟─d56c84c1-4256-431f-9dce-e1f134d7d583
+# ╠═fa346c73-60b2-42b4-91c3-40e8b3fa197a
+# ╟─3d1d023e-321c-4d25-9212-3a061d9a4f18
+# ╠═a7dfebb7-e9e8-4040-b71f-28bcef6dd22b
+# ╠═d182a72d-b0ec-4bcd-986d-206fea6fb7a5
+# ╟─792abf30-5fb5-4a90-8872-048e16624dd0
+# ╠═edc8f1d4-dfea-4e32-a2cc-f902816a1a4f
+# ╠═2fb53792-5ba6-40e4-8aaf-6829c04659ea
+# ╟─ee83b946-8351-4fc0-9d03-058a0769d429
+# ╟─08b8c030-0700-46c0-b452-4d47e8bd35e9
+# ╟─fa5305b8-6573-4319-8aa8-b83bcc3e2d4c
+# ╟─b68483f8-0f72-4907-922b-33dce51d888f
+# ╟─db455f9d-83c8-4217-b114-fe950244eeb6
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
