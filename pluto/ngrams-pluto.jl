@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.17.5
+# v0.19.0
 
 using Markdown
 using InteractiveUtils
@@ -38,7 +38,7 @@ md"""
 md"""
 # Exploring n-grams
 
-In this workshop session, we'll use Julia in a different environment:  Pluto notebooks. We will build an interactive tool to explore patterns of language in different openly licensed translations of the Bible in multiple languages. 
+In this workshop session, we'll use Julia in a different environment:  Pluto notebooks. We will build an interactive tool to explore patterns of language in different openly licensed translations of the Bible in multiple languages from [ebible.org](https://ebible.org/download.php).
 
 ## Overview
 
@@ -58,7 +58,30 @@ md"""## Pluto notebooks
 First let's get familiar with our new environment: Pluto notebooks.
 
 
-Every cell in a Pluto notebook is a Julia object!  Recall that this means it has a *value*.  A Pluto notebook server will display the *value* of the cell: you can show or hide the Julia expression defining the cell's value using the 
+Every cell in a Pluto notebook is a Julia object!  Recall that this means it has a *value*.  A Pluto notebook server will display the *value* of the cell.
+
+"""
+
+# ╔═╡ 0420fcb7-691a-48e1-a5d3-08e3cab48cb8
+md"""## Setting up the notebook
+
+This template notebook will bring in the packages we need to analyze n-grams, and will set up the user interaction.  In our workshop, we'll develop code to analyze n-grams.
+
+Just as we did in our scrips, we'll add `using` statements for the packages we need at the beginning of our notebook.  Each Pluto cell can only evaluate one expression, but we can make a single expression by grouping expressions together with `begin` and `end`, much as a function definition is a single expression.
+"""
+
+# ╔═╡ 5a77c40f-96d3-4a68-a68e-7b487f8a8532
+md"""### User interaction with `PlutoUI` widgets
+
+The `PlutoUI` packages defines a number of widgets that create a value from a user's interaqction.  We'll use a file-picker button to choose a file from your local files, and sliders to set values for the number of sequential words to group together (the `n` value of the n-grams, and for the number of words to display).
+
+The general pattern of `PlutoUI` widgets is that they use a command called `@bind` to assign the a value to a variable based on what the user does. In our workshop, we won't go through how to set up these widgets in detail, but you can always look at the Julia code, and can learn more about the `PlutoUI` package from [the PlutoUI github repository](https://github.com/JuliaPluto/PlutoUI.jl).
+"""
+
+# ╔═╡ 73e4e909-7fee-487b-b538-a88f680ec326
+md"""#### File picker
+
+The `Choose File` button loads data from a file when you click the button and choose a file on your computer.  A separate cell at the bottom of this notebook collects the text contents of the file in a variable named `fulltext`.  The following cell just displays the length of the text we've read in.
 
 """
 
@@ -67,31 +90,174 @@ md"""
 $(@bind f PlutoUI.FilePicker([MIME("text/plain")]))
 """
 
+# ╔═╡ 8b514416-6d9d-4b31-a75f-5539c6fc5e50
+md"""#### Choosing `n`
+
+This slider assigns an integer value to a variable named `n`, which we'll use for the number of sequential words to group together.  Play with the slider, and watch the values in the cell below this one change.
+"""
+
 # ╔═╡ a8147f92-218b-4ec2-92c5-b889c1d96194
 md"""n-gram size: $(@bind n Slider(1:15; default=3, show_value=true))"""
 
-# ╔═╡ 9b07bfe1-6ed5-4dc7-b605-a96eed687349
-md"""Selected n-gram size: $(n)"""
+# ╔═╡ 0d5b5501-fe8b-4f4c-b171-3f1b7a195496
+n
+
+# ╔═╡ ad835664-d05c-4f8c-ae80-7a09128fe109
+md"""#### Choosing how many results to display
+
+This slider assigns an integer value to a variable named `maxdisplay`. We'll use that to limit the number of n-grams to graph.  The slider lets you choose a value from 50-500 by 10s.  Try it and watch the cell below this one change.
+"""
 
 # ╔═╡ d56c84c1-4256-431f-9dce-e1f134d7d583
 md"""Number of n-grams to display: $(@bind maxdisplay Slider(50 : 10 : 500; default=100, show_value=true))"""
 
-# ╔═╡ fa346c73-60b2-42b4-91c3-40e8b3fa197a
-md"Selected number to display: $(maxdisplay)"
+# ╔═╡ 8d0e5443-9f1f-43d2-b26f-56e39591f188
+maxdisplay
 
 # ╔═╡ 3d1d023e-321c-4d25-9212-3a061d9a4f18
-md""">Computing ngrams"""
+md"""## Computing n-grams
 
-# ╔═╡ a7dfebb7-e9e8-4040-b71f-28bcef6dd22b
-md"""DO A THING RIGHT HERE."""
+These are the steps to compute n-grams from the `fulltext` variable.
 
-# ╔═╡ 792abf30-5fb5-4a90-8872-048e16624dd0
-n
+1.  Create a list of words from `fulltext`.
+2. Apply the `slidingwindow` function to the list of words.
+3.  Turn each ngram like `["In","the","beginning"]` into a single string like "In_the_beginning".
+4.  Cluster occurrences of these ngrams together using `group`.
+5. Count the number of occurrences in each cluster
+
+"""
+
+# ╔═╡ 4da19c49-90f8-49b7-8e5c-abca95029166
+md"""#### 1) Create a word list
+
+
+The following cell defines a function named `wordlist`.  Replace `missing` with Julia code to split `str` into a list of words.  (E.g., if `str` was `"In the beginning"`, `wordlist` should return  `["In","the","beginning"]`)
+
+We'll use your function in the subsequent cell to assign a list of words in `fulltext` to a variable `words`.
+
+
+"""
+
+# ╔═╡ bb8e5fbc-0244-46da-8407-575319a99cf1
+"Split up the string `str` into a list of words."
+function wordlist(str)
+	missing
+end
+
+# ╔═╡ 144d5da2-32aa-47dd-b89f-685129b60e3e
+md"""#### 2) Using `slidingwindow` to create n-grams
+
+
+In the next cell, replace `missing` with an invocation of the `slidingwindow` function to create sequences of `n` words.
+"""
+
+# ╔═╡ 310b7571-450e-4a8f-ad80-ea603e091bd1
+windows = missing 
+
+
+# ╔═╡ 0f6a0674-5ce0-4c47-9a09-f4e2f513b20d
+md"""#### 3) Convert each list of words to a string
+
+
+We can convert each window of n-grams into a single string by joining the words with "_".  That's just another application of `map`!
+
+The next cell does that after first checking whether you've completed the work to define `windows`.
+"""
+
+# ╔═╡ f341b6df-bf2e-4556-b328-f6fc3791e1eb
+ngramstrings = if ismissing(windows)
+	[]
+else
+	map(list -> join(list, "_"), windows)
+end
+
+# ╔═╡ b1cb88b7-1ef0-44ec-90a2-271cd2b39a5e
+md"""#### 4) Cluster occurrences of ngrams
+
+
+Replace `missing` in the following cell: use the `group` function to cluster together values in `ngramstrings`.
+"""
+
+
+# ╔═╡ 5cdb6ba1-7f98-4dfe-b784-6bf0dc986f13
+clustered = missing
+
+# ╔═╡ 9467aae2-fdfc-42d1-b576-25f03aa28508
+
+if ismissing(clustered)
+	still_missing()
+
+elseif ! haskey(clustered, (clustered |> keys |> collect)[1])
+	keep_working(md"Your result should be a dictionary keyed by ngramstring values")
+
+else
+	correct()
+end
+
+# ╔═╡ 215a64fe-92c5-441e-a36d-4e4eb4170b74
+md"""### 5) Count the occurrences in each cluster
+
+The result of clustering the list of ngrams should be a dictionary.  We can collect the keys of the dictionary with `collect(keys(clustered))`.  Then we can just map each key to a `Tuple` pairing the key (the ngram string), with the *length* of the list of occurrences.
+
+
+!!! note "Checking for missing data"
+
+    We generate lots of unhelpful error messages if we try to collect the keys for or find the length of an undefined object, so the next two cells first check to see if we have completed the earlier parts of this notebook.  `ismissing` is a function that is true if a variable has the special value `missing` (the only possible value of the `Missing` type).  The `isempty` returns `true` if a list is empty.
+
+
+"""
+
+# ╔═╡ c4c2822a-8d9a-49bb-a15e-42d6e9fc8af3
+keyslist = if ismissing(clustered) 
+	[] 
+else
+	collect(keys(clustered))
+end
+
+
+# ╔═╡ a588784b-e3d5-4307-95d2-09c63ebfd3d5
+ngramcounts = if isempty(keyslist)
+	[]
+else 
+	map(k -> (k, length(clustered[k])), [])
+end
+
+# ╔═╡ ee4a8881-c07f-49fa-8d5c-4e1aa7091eee
+md"""## Plotting a graph of n-grams
+
+The final step in our notebook is to graph the n-grams' frequency.  We'll plot them using a bar chart, as we did yesterday.  The x-axis labels will be the ngrams, and the y-axis values will be the number of occurrences of the ngrams.  As we did yesterday, we'll get those lists by 
+
+Because our list is so long, however, we won't plot the entire list, only the top values.  The number of top values will be `maxdisplay`, the selection the user made.
+"""
+
+# ╔═╡ 30b20466-b3a7-43b2-b3b2-2081961204fb
+begin
+	if isempty(ngramcounts)
+		md"""> *-> Waiting for counts to be computed*."""
+	else
+		gramlist = map(pr -> pr[1], ngramcounts)
+	    gramcounts = map(pr -> pr[2], ngramcounts)
+		bardata = bar(x=gramlist[1:maxdisplay], y=gramcounts[1:maxdisplay]) 
+		
+		graphlayout =  Layout(
+	        title = "$(n)-gram frequency",
+	        xaxis_title = "$(n)-gram",
+	        yaxis_title = "Occurrences",
+			width=w,
+			height=h
+	    )
+		
+		Plot(bardata, graphlayout)
+
+	end
+end
 
 # ╔═╡ 08b8c030-0700-46c0-b452-4d47e8bd35e9
 md"""> 
 >
-> Data
+> *Collecting data*
+>
+> The following cells handle the mechanics of reading in a text in the format used by ebibles.org, and extracting the full text of a translation.
 """
 
 # ╔═╡ b68483f8-0f72-4907-922b-33dce51d888f
@@ -111,20 +277,52 @@ fulltext = begin
 	join(passages," ")
 end
 
-# ╔═╡ ee83b946-8351-4fc0-9d03-058a0769d429
-tidytext = begin
-	alphas = filter(c -> ! ispunct(c), fulltext)
-	map(c -> lowercase(c), alphas)
+# ╔═╡ 912ecdc2-c704-42fe-8a4a-860cd21937ef
+length(fulltext)
+
+# ╔═╡ f8962624-afd9-40e8-8c32-010c38de8922
+words = wordlist(fulltext)
+
+# ╔═╡ 54671673-4b7b-4d60-bb73-9d178cdb6956
+if !@isdefined(wordlist)
+	not_defined(:wordlist)
+	
+elseif ismissing(words)
+	still_missing()
+
+elseif ! (typeof(words)  <: Vector)
+	keep_working(md"Your function should create a Vector of words.  ")
+
+elseif ! (eltype(words)  <: AbstractString)
+	keep_working(md"You've created a Vector, but its contents don't look like String values.")
+elseif length(words) < 1000
+	keep_working(md"That's a pretty short list of words.  Are you sure you've got that right?")
+else
+	correct()
 end
 
-# ╔═╡ edc8f1d4-dfea-4e32-a2cc-f902816a1a4f
-chunked = slidingwindow(split(tidytext), n = n)
+# ╔═╡ 5062673f-8e69-402a-acef-85ee8efc8542
+#if !@isdefined(windows)
+#	not_defined(:windows)
+	
+#else
+if ismissing(words)
+	keep_working(md"You'll need to use `slidingwindow` to get a list of words.  Look a few cells earlier to complete that first.")
+	
+elseif ismissing(windows)
+	still_missing()
 
-# ╔═╡ 2fb53792-5ba6-40e4-8aaf-6829c04659ea
-group(chunked)
+elseif ! (typeof(windows[1]) <: SubArray)
+	keep_working(md"Doesn't look like these are grouped right.")
+
+elseif length(windows[1]) != n
+	keep_working(md"We're trying to make groups of size $(n). Did you remember to do that?")
+else
+	correct()
+end
 
 # ╔═╡ db455f9d-83c8-4217-b114-fe950244eeb6
-isnothing(f) ? "Nothing yet." : f
+isnothing(f) ? "Nothing chosen yet." : f
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -624,19 +822,37 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╟─d4b3c0de-29a9-4e12-aaeb-ffbadd16d822
 # ╟─6ed35212-af84-11ec-2c60-cd3e7a4ec044
 # ╟─bbf1f800-6b5f-457e-b6ff-ba125d09bea7
+# ╟─0420fcb7-691a-48e1-a5d3-08e3cab48cb8
 # ╠═1f84b8d6-4f2d-4fe9-bdfc-e7dcc3d70aaa
+# ╟─5a77c40f-96d3-4a68-a68e-7b487f8a8532
 # ╠═6bd575ab-3873-4131-821d-1b3c981a2534
+# ╟─73e4e909-7fee-487b-b538-a88f680ec326
+# ╠═912ecdc2-c704-42fe-8a4a-860cd21937ef
 # ╟─0dcacf9f-6e20-4186-99e2-3d6452c4d6dd
-# ╠═a8147f92-218b-4ec2-92c5-b889c1d96194
-# ╠═9b07bfe1-6ed5-4dc7-b605-a96eed687349
+# ╟─8b514416-6d9d-4b31-a75f-5539c6fc5e50
+# ╠═0d5b5501-fe8b-4f4c-b171-3f1b7a195496
+# ╟─a8147f92-218b-4ec2-92c5-b889c1d96194
+# ╟─ad835664-d05c-4f8c-ae80-7a09128fe109
+# ╠═8d0e5443-9f1f-43d2-b26f-56e39591f188
 # ╟─d56c84c1-4256-431f-9dce-e1f134d7d583
-# ╠═fa346c73-60b2-42b4-91c3-40e8b3fa197a
 # ╟─3d1d023e-321c-4d25-9212-3a061d9a4f18
-# ╠═a7dfebb7-e9e8-4040-b71f-28bcef6dd22b
-# ╟─792abf30-5fb5-4a90-8872-048e16624dd0
-# ╠═edc8f1d4-dfea-4e32-a2cc-f902816a1a4f
-# ╠═2fb53792-5ba6-40e4-8aaf-6829c04659ea
-# ╟─ee83b946-8351-4fc0-9d03-058a0769d429
+# ╟─4da19c49-90f8-49b7-8e5c-abca95029166
+# ╠═bb8e5fbc-0244-46da-8407-575319a99cf1
+# ╠═f8962624-afd9-40e8-8c32-010c38de8922
+# ╟─54671673-4b7b-4d60-bb73-9d178cdb6956
+# ╟─144d5da2-32aa-47dd-b89f-685129b60e3e
+# ╠═310b7571-450e-4a8f-ad80-ea603e091bd1
+# ╟─5062673f-8e69-402a-acef-85ee8efc8542
+# ╟─0f6a0674-5ce0-4c47-9a09-f4e2f513b20d
+# ╠═f341b6df-bf2e-4556-b328-f6fc3791e1eb
+# ╟─b1cb88b7-1ef0-44ec-90a2-271cd2b39a5e
+# ╠═5cdb6ba1-7f98-4dfe-b784-6bf0dc986f13
+# ╟─9467aae2-fdfc-42d1-b576-25f03aa28508
+# ╟─215a64fe-92c5-441e-a36d-4e4eb4170b74
+# ╠═c4c2822a-8d9a-49bb-a15e-42d6e9fc8af3
+# ╠═a588784b-e3d5-4307-95d2-09c63ebfd3d5
+# ╟─ee4a8881-c07f-49fa-8d5c-4e1aa7091eee
+# ╠═30b20466-b3a7-43b2-b3b2-2081961204fb
 # ╟─08b8c030-0700-46c0-b452-4d47e8bd35e9
 # ╟─fa5305b8-6573-4319-8aa8-b83bcc3e2d4c
 # ╟─b68483f8-0f72-4907-922b-33dce51d888f
