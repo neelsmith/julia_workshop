@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.17.5
+# v0.19.0
 
 using Markdown
 using InteractiveUtils
@@ -625,7 +625,7 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╔═╡ Cell order:
 # ╟─a2cb957f-c8eb-4e0f-a1e5-3e37f2b7bd27
 # ╟─3c2dbe8c-363c-4ad8-a862-6a74c45808e0
-# ╟─777185cc-b116-11ec-218d-453c13034275
+# ╠═777185cc-b116-11ec-218d-453c13034275
 # ╟─7f8af184-9753-47de-8660-f07990f247d9
 # ╠═efe0e3ed-0c14-48d3-a0fd-d65dba74ee2f
 # ╟─45f22493-7e17-4bab-bd4c-8dca46a15c01
@@ -650,7 +650,7 @@ uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 # ╠═288cf4a9-6f87-4c10-884f-7c44d8d73e27
 # ╟─08c2184b-631b-4aa4-9c43-cc7f0446a709
 # ╠═61f6a990-31ab-4e38-bb91-372a60dbe5e4
-# ╠═aae31cae-a87c-4479-a7fc-b942d2d7dff2
+# ╟─aae31cae-a87c-4479-a7fc-b942d2d7dff2
 # ╟─8d437fee-bbb5-437c-9bb2-08edd35c5afc
 # ╠═3fdcf2d8-8ace-41dc-bb30-54306fe1d8d0
 # ╟─72ec26e1-7c46-4cac-9fb1-a541ac2604d0
